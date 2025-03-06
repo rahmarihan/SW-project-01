@@ -12,7 +12,6 @@ const bookingSchema = new mongoose.Schema({
     required: true
   },
  
-
   numberOfTickets: {
     type: Number,
     required: true,
