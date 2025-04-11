@@ -17,4 +17,13 @@ app.get('/', (req, res) => {
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+
+
+
 });
+
+// Add this with your other route imports
+const bookingRoutes = require('C:\Users\Lenovo\OneDrive\Desktop\Software\SOFTWAREPROJECT1\SW-project-01\Routes\bookingRoutes.js');
+
+// Add this with your other route middleware
+app.use('/api/v1/bookings', bookingRoutes);
