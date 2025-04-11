@@ -6,7 +6,7 @@ const {
   changeEventStatus,
   getEventAnalytics
 } = require('../controllers/eventController');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { protect, authorize } = require('../middleware/Authentication');
 
 // Part C Routes
 router.get('/organizer/events', protect, authorize('organizer'), getOrganizerEvents);

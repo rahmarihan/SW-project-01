@@ -1,32 +1,48 @@
+require('dotenv').config(); // Load environment variables
 const express = require('express');
 const mongoose = require('mongoose');
 const eventRoutes = require('./routes/eventRoutes');
-const ErrorResponse = require('./utils/errorResponse');
+const ErrorResponse = require('./utils/errorResponse'); // Ensure this path is correct
 
+// Initialize Express app
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(express.json()); // Parse JSON bodies
 
-// Database connection (MongoDB)
-mongoose.connect('mongodb://localhost:27017/event-ticketing', {
+// Database Connection (MongoDB)
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/event-ticketing', {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false
 })
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
 
-// Part C: Event Management Routes
-app.use('/api/v1/events', eventRoutes);
+// Routes
+app.use('/api/v1/events', eventRoutes); // Part C Event Management Routes
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  res.status(err.statusCode || 500).json({
-    success: false,
-    error: err.message || 'Server Error'
+// Health Check Endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    status: 'active',
+    message: 'Event Ticketing System API' 
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Error Handling Middleware (Must be last!)
+app.use((err, req, res, next) => {
+  console.error(' Error:', err.stack);
+  res.status(err.statusCode || 500).json({
+    success: false,
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Server Error'
+  });
+});
+
+// Start Server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => 
+  console.log(`Server running on port ${PORT} | http://localhost:${PORT}`)
+);
+
