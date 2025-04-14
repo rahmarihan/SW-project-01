@@ -1,4 +1,4 @@
-const Event = require('../models/Event');
+const Event = require('./Event');
 const ErrorResponse = require('../utils/errorResponse');
 
 // Part C.1 - Organizer gets their own events
