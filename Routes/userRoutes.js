@@ -9,11 +9,11 @@ const {
 const { protect } = require('C:\Users\My Lab\Desktop\SW3\Middleware\Authentication.js');
 
 // Public routes
-router.post('/register', registerUser);
-router.post('/login', loginUser);
+router.post('/api/v1/register ', registerUser);
+router.post('/api/v1/login', loginUser);
 
 // Protected routes
-router.route('/profile')
+router.route('/api/v1/users/profile')
     .get(protect, getUserProfile)
     .put(protect, updateUserProfile);
 
