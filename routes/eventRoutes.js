@@ -14,4 +14,16 @@ router.put('/:id', protect, authorize('organizer'), updateEvent);
 router.get('/organizer/analytics', protect, authorize('organizer'), getEventAnalytics);
 router.put('/:id/status', protect, authorize('admin'), changeEventStatus);
 
+
+router.get(
+  ' /api/v1/users/events',
+  authenticate,
+  authorize('organizer'),  // Only organizers can access
+  eventController.getOrganizerEvents
+);
+
+
+
 module.exports = router;
+
+

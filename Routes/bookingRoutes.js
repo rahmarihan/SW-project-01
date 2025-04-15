@@ -27,4 +27,11 @@ router.delete(
   bookingController.cancelBooking
 );
 
+router.get(
+  '/api/v1/bookings/:id',
+  authenticate,
+  authorize('user'), // Only standard users can access
+  bookingController.getBookingDetails
+);
+
 module.exports = router;
