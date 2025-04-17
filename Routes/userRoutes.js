@@ -11,7 +11,9 @@ const {
     getUserProfile,
     updateUserProfile
 } = require('../Controllers/userController');
+
 const { protect } = require('middleware\Authentication.js');
+
 
 // Public routes
 router.post('/register', registerUser);

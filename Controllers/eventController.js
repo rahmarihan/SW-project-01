@@ -61,4 +61,39 @@ exports.getEventAnalytics = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+
+
+
+  const createEvent = async (req, res) => {
+    const { name, description, date, location } = req.body;
+
+    try {
+        const event = await Event.create({
+            name,
+            description,
+            date,
+            location,
+            organizer: req.user._id // Save the organizer's ID
+        });
+
+        res.status(201).json(event);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+
+const getAllEvents = async (req, res) => {
+  try {
+      const events = await Event.find().populate('organizer', 'name email');
+      res.status(200).json(events);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 };
