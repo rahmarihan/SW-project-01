@@ -1,3 +1,4 @@
+
 const jwt = require("jsonwebtoken");
 const secretKey = process.env.JWT_SECRET
 
@@ -26,3 +27,4 @@ module.exports = function authenticationMiddleware(req, res, next) {
     next();
   });
 };
+
