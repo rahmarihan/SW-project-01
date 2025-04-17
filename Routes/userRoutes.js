@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs'); // For password hashing
 const User = require('../models/User'); // Your User model
-const authenticate = require('Middleware\Authentication.js'); // Authentication middleware
-const authorize = require('Middleware\Authorization.js');
+const authenticate = require('middleware\Authentication.js'); // Authentication middleware
+const authorize = require('middleware\Authorization.js');
 const crypto = require('crypto'); // For generating random tokens
 const {
     registerUser,
@@ -11,7 +11,7 @@ const {
     getUserProfile,
     updateUserProfile
 } = require('../Controllers/userController');
-const { protect } = require('Middleware\Authentication.js');
+const { protect } = require('middleware\Authentication.js');
 
 // Public routes
 router.post('/register', registerUser);

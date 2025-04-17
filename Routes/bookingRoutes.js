@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const bookingController = require('../controllers/bookingController');
-const { authenticate, authorize } = require('../middleware/auth');
+const  authenticate = require('middleware\Authentication.js');
+const  authorize = require('middleware\Authorization.js');
 
 // Book tickets (Authenticated users only)
 router.post(
