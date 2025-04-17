@@ -5,15 +5,15 @@ const {
     loginUser,
     getUserProfile,
     updateUserProfile
-} = require('c:/Users/My Lab/Desktop/SW3/Controllers/userController');
-const { protect } = require('C:\Users\My Lab\Desktop\SW3\Middleware\Authentication.js');
+} = require('../Controllers/userController');
+const { protect } = require('..\Middleware\Authentication.js');
 
 // Public routes
-router.post('/api/v1/register ', registerUser);
-router.post('/api/v1/login', loginUser);
+router.post('/register', registerUser);
+router.post('/login', loginUser);
 
 // Protected routes
-router.route('/api/v1/users/profile')
+router.route('/profile')
     .get(protect, getUserProfile)
     .put(protect, updateUserProfile);
 

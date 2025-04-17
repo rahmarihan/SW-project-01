@@ -14,8 +14,8 @@ router.put('/:id', protect, authorize('organizer'), updateEvent);
 router.get('/organizer/analytics', protect, authorize('organizer'), getEventAnalytics);
 router.put('/:id/status', protect, authorize('admin'), changeEventStatus);
 
-router.post('/api/v1/events', authorize('organizer'),createEvent);
+router.post('/', authorize('organizer'),createEvent);
 
-router.get('/api/v1/events ', getAllEvents);
+router.get('/', getAllEvents);
 
 module.exports = router;
