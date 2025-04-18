@@ -29,7 +29,7 @@ router.delete(
 );
 
 router.get(
-  '/api/v1/bookings/:id',
+  '/:id',
   authenticate,
   authorize('user'), // Only standard users can access
   bookingController.getBookingDetails

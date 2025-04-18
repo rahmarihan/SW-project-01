@@ -39,7 +39,7 @@ router.post('/', authorize('organizer'),createEvent);
 
 router.get('/', getAllEvents);
 
-module.exports = router;
+
 
 router.get(
   ' /api/v1/users/events',
@@ -48,6 +48,7 @@ router.get(
   eventController.getOrganizerEvents
 );
 
+module.exports = router;
 
 
 

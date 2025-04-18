@@ -44,17 +44,27 @@ const registerUser = async (req, res) => {
 // @access  Public
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
-    
+
     try {
         const user = await User.findOne({ email });
-        
+
         if (user && (await user.comparePassword(password))) {
+            const token = generateToken(user._id);
+
+            // Set token in cookie
+            res.cookie('token', token, {
+                httpOnly: true,          // prevents JS access on client
+                secure: process.env.NODE_ENV === 'production', // use HTTPS in prod
+                sameSite: 'strict',      // CSRF protection
+                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+            });
+
+            // Send user data without token
             res.json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role,
-                token: generateToken(user._id)
+                role: user.role
             });
         } else {
             res.status(401).json({ message: 'Invalid credentials' });
@@ -64,6 +74,7 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 // @desc    Get user profile
 // @route   GET /api/v1/users/profile

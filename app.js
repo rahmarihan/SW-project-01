@@ -8,7 +8,17 @@ const app = express()
 
 connectDB()
 
+app.use(cookieParser());
 app.use(express.json())
+
+const userRoutes = require('./Routes/userRoutes')
+const eventRoutes = require('./Routes/eventRoutes')
+const bookingRoutes = require('./Routes/bookingRoutes')
+
+
+app.use('/api/v1', userRoutes);
+app.use('/api/v1/Event', eventRoutes);
+app.use('/api/v1/Booking', bookingRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({ 

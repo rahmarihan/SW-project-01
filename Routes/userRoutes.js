@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs'); // For password hashing
 const User = require('../models/User'); // Your User model
-const authenticate = require('middleware\Authentication.js'); // Authentication middleware
+const authenticate =  require('middleware\Authentication.js'); // Authentication middleware
 const authorize = require('middleware\Authorization.js');
 const crypto = require('crypto'); // For generating random tokens
 const {
