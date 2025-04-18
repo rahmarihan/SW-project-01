@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const protect  =  require('../middleware/Authentication');
 const roleCheck = require('../middleware/Authorization');
 // @desc    Register a new user
@@ -58,8 +60,8 @@ const loginUser = async (req, res) => {
 
             // Set token in cookie
             res.cookie('token', token, {
-                httpOnly: true,          // prevents JS access on client
-                secure: process.env.NODE_ENV === 'production', // use HTTPS in prod
+                httpOnly: true,          // Prevents JS access on client
+                secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
                 sameSite: 'strict',      // CSRF protection
                 maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
             });
@@ -79,6 +81,7 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 
 // @desc    Get user profile
@@ -143,9 +146,131 @@ const generateToken = (id) => {
 };
 
 
+// @desc    Send password reset token
+// @route   PUT /api/v1/forgetPassword
+// @access  Public
+const forgetPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        user.resetToken = crypto.randomBytes(20).toString('hex');
+        user.resetTokenExpiry = Date.now() + 600000; // 10 mins
+        await user.save();
+
+        res.json({
+            message: 'Reset token generated (simulated email)',
+            token: user.resetToken
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc    Reset password using token
+// @route   PUT /api/v1/resetPassword
+// @access  Public
+const resetPassword = async (req, res) => {
+    const { token, newPassword } = req.body;
+
+    try {
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpiry: { $gt: Date.now() }
+        });
+
+        if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        user.resetToken = undefined;
+        user.resetTokenExpiry = undefined;
+        await user.save();
+
+        res.json({ message: 'Password reset successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Admin-specific handlers
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find({}).select('-password -resetToken -__v').lean();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password -resetToken -__v');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        if (error.name === 'CastError') {
+            return res.status(400).json({ message: 'Invalid user ID format' });
+        }
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const updateUserRole = async (req, res) => {
+    try {
+        const { role } = req.body;
+        if (!role || !['user', 'organizer', 'admin'].includes(role)) {
+            return res.status(400).json({ message: 'Invalid role. Allowed: user, organizer, admin' });
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { role },
+            { new: true, runValidators: true }
+        ).select('-password -resetToken -__v');
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        if (error.name === 'CastError') {
+            return res.status(400).json({ message: 'Invalid user ID format' });
+        }
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        res.json({
+            message: 'User deleted successfully',
+            deletedUser: {
+                _id: user._id,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        if (error.name === 'CastError') {
+            return res.status(400).json({ message: 'Invalid user ID format' });
+        }
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 module.exports = {
     registerUser,
     loginUser,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    forgetPassword,
+    resetPassword,
+    getAllUsers,
+    getUserById,
+    updateUserRole,
+    deleteUser
 };
