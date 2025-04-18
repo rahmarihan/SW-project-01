@@ -8,7 +8,7 @@ const {
   // Your existing functions...
   getOrganizerEvents,
   changeEventStatus
-} = require('../controllers/eventController');
+} = require('../Controllers/eventController');
 
 
 
