@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const { protect, roleCheck } = require('..\middleware\Authentication.js');
-
+const protect  =  require('../middleware/Authentication');
+const roleCheck = require('../middleware/Authorization');
 // @desc    Register a new user
 // @route   POST /api/v1/register
 // @access  Public

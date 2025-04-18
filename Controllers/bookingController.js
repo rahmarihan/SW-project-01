@@ -97,3 +97,24 @@ exports.cancelBooking = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+// Task: Authenticated users can get details of a specific booking
+exports.getBookingDetails = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate('event');
+
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    // Check if the logged-in user is the one who made the booking
+    if (booking.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
+    res.status(200).json(booking);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

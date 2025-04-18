@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs'); // For password hashing
 const User = require('../models/User'); // Your User model
-const authenticate =  require('middleware\Authentication.js'); // Authentication middleware
-const authorize = require('middleware\Authorization.js');
+const authenticate =  require('../middleware/Authentication'); // Authentication middleware
+const authorize = require('../middleware/Authorization');
 const crypto = require('crypto'); // For generating random tokens
 const {
     registerUser,
@@ -12,7 +12,7 @@ const {
     updateUserProfile
 } = require('../Controllers/userController');
 
-const { protect } = require('middleware\Authentication.js');
+const protect  = require('../middleware/Authentication');
 
 
 // Public routes
@@ -79,7 +79,7 @@ router.put('/forgetPassword', async (req, res) => {
 
 
 // GET /api/v1/users (Admin-only)
-router.get('/', auth, authorize(['admin']), async (req, res) => {
+router.get('/', authenticate, authorize(['admin']), async (req, res) => {
     try {
       // Fetch all users, excluding sensitive fields (password, resetToken)
       const users = await User.find({})
@@ -95,7 +95,7 @@ router.get('/', auth, authorize(['admin']), async (req, res) => {
 
 
 // GET /api/v1/users/:id (Admin-only)
-router.get('/:id', auth, authorize(['admin']), async (req, res) => {
+router.get('/:id', authenticate, authorize(['admin']), async (req, res) => {
     try {
       // 1. Find user by ID and exclude sensitive fields
       const user = await User.findById(req.params.id)
@@ -120,7 +120,7 @@ router.get('/:id', auth, authorize(['admin']), async (req, res) => {
 
 
 // PUT /api/v1/users/:id (Admin-only role update)
-router.put('/:id', auth, authorize(['admin']), async (req, res) => {
+router.put('/:id', authenticate, authorize(['admin']), async (req, res) => {
     try {
       // 1. Validate request body
       const { role } = req.body;
@@ -151,7 +151,7 @@ router.put('/:id', auth, authorize(['admin']), async (req, res) => {
   
 
 // DELETE /api/v1/users/:id (Admin-only)
-router.delete('/:id', auth, authorize(['admin']), async (req, res) => {
+router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
     try {
       // 1. Find and delete user
       const user = await User.findByIdAndDelete(req.params.id);

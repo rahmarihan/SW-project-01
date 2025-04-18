@@ -1,19 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const {
-  getOrganizerEventAnalytics, // API 1
-  getSingleEvent,             // API 2
-  updateEventDetails,         // API 3
-  deleteEvent,                // API 4
-  // Your existing functions...
+  getOrganizerEventAnalytics,
+  getSingleEvent,
+  updateEventDetails,
+  deleteEvent,
   getOrganizerEvents,
-  changeEventStatus
+  changeEventStatus,
+  createEvent,             // ✅ Add this
+  getAllEvents             // ✅ Add this
 } = require('../Controllers/eventController');
 
 
 
-const  protect = require('middleware\Authentication.js');
-const  authorize = require('middleware\Authorization.js');
+const  protect =  require('../middleware/Authentication');
+const  authorize = require('../middleware/Authorization');
 
 
 
@@ -41,12 +42,12 @@ router.get('/', getAllEvents);
 
 
 
-router.get(
-  ' /api/v1/users/events',
-  authenticate,
-  authorize('organizer'),  // Only organizers can access
-  eventController.getOrganizerEvents
-);
+// router.get(
+//   '/users/events',  // ✅ removed space
+//   authenticate,
+//   authorize('organizer'),
+//   getOrganizerEvents
+// );
 
 module.exports = router;
 

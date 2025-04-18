@@ -1,30 +1,35 @@
-
 const jwt = require("jsonwebtoken");
-const secretKey = process.env.JWT_SECRET
+const secretKey = process.env.JWT_SECRET;
 
 module.exports = function authenticationMiddleware(req, res, next) {
-  const cookie = req.cookies;// if not working then last option req.headers.cookie then extract token
-  console.log('inside auth middleware')
-  // console.log(cookie);
-
-  if (!cookie) {
-    return res.status(401).json({ message: "No Cookie provided" });
+  console.log('Inside authentication middleware');
+  
+  // First, check if the secretKey is set in the environment variables
+  if (!secretKey) {
+    console.error("❗ Missing JWT_SECRET in environment variables");
+    return res.status(500).json({ message: "Internal server error" });
   }
-  const token = cookie.token;
+
+  // Get token from cookies (or fallback to headers if cookies are not available)
+  const cookie = req.cookies;
+  const token = cookie?.token || (req.headers.cookie?.split('=')[1]);
+
   if (!token) {
-    return res.status(405).json({ message: "No token provided" });
+    return res.status(401).json({ message: "No token provided" });
   }
 
+  // Verify token using JWT
   jwt.verify(token, secretKey, (error, decoded) => {
     if (error) {
+      // Handle expired token separately
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: "Token expired" });
+      }
       return res.status(403).json({ message: "Invalid token" });
     }
 
-    // Attach the decoded user ID to the request object for further use
-    //console.log(decoded.user)
-    
+    // Attach decoded user info to the request object for use in subsequent middlewares or routes
     req.user = decoded.user;
     next();
   });
 };
-

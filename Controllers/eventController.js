@@ -1,3 +1,6 @@
+const Event = require('../models/Event'); // Assuming you have the Event model
+const ErrorResponse = require('../utils/errorResponse'); // Assuming you have custom error handling
+
 // API 1: GET /api/v1/users/events/analytics (Organizer)
 exports.getOrganizerEventAnalytics = async (req, res, next) => {
   try {
@@ -21,44 +24,6 @@ exports.getOrganizerEventAnalytics = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-
-
-
-
-
-  const createEvent = async (req, res) => {
-    const { name, description, date, location } = req.body;
-
-    try {
-        const event = await Event.create({
-            name,
-            description,
-            date,
-            location,
-            organizer: req.user._id // Save the organizer's ID
-        });
-
-        res.status(201).json(event);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
-};
-
-
-
-const getAllEvents = async (req, res) => {
-  try {
-      const events = await Event.find().populate('organizer', 'name email');
-      res.status(200).json(events);
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
-  }
-};
-
-
-
 };
 
 // API 2: GET /api/v1/events/:id (Public)
@@ -129,9 +94,8 @@ exports.deleteEvent = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-
-
 };
+
 // Get all events created by the current organizer
 exports.getOrganizerEvents = async (req, res) => {
   try {
@@ -151,5 +115,75 @@ exports.getOrganizerEvents = async (req, res) => {
       error: error.message
     });
   }
+};
 
+// API for creating an event
+exports.createEvent = async (req, res) => {
+  const { name, description, date, location } = req.body;
+
+  try {
+    const event = await Event.create({
+      name,
+      description,
+      date,
+      location,
+      organizer: req.user._id // Save the organizer's ID
+    });
+
+    res.status(201).json(event);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Get all events (for public view)
+exports.getAllEvents = async (req, res) => {
+  try {
+    const events = await Event.find().populate('organizer', 'name email');
+    res.status(200).json(events);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+// Change Event Status (Admin only)
+exports.changeEventStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body;  // The new status to set
+
+    // Validate status (You can add more status checks if needed)
+    const validStatuses = ['approved', 'pending', 'rejected'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+
+    // Find the event by ID
+    let event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Authorization check: Only admin can change the status
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized to change event status' });
+    }
+
+    // Update the event status
+    event.status = status;
+
+    // Save the updated event
+    event = await event.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Event status updated successfully',
+      data: event
+    });
+  } catch (err) {
+    next(err);
+  }
 };
