@@ -25,6 +25,7 @@ exports.getOrganizerEventAnalytics = async (req, res, next) => {
 
 
 
+
   const createEvent = async (req, res) => {
     const { name, description, date, location } = req.body;
 
@@ -127,6 +128,28 @@ exports.deleteEvent = async (req, res, next) => {
     res.status(200).json({ success: true, data: {} });
   } catch (err) {
     next(err);
+  }
+
+
+};
+// Get all events created by the current organizer
+exports.getOrganizerEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ 
+      organizer: req.user._id  // Filter by logged-in organizer
+    }).sort({ createdAt: -1 });  // Newest first
+
+    res.status(200).json({
+      success: true,
+      count: events.length,
+      events
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching organizer events',
+      error: error.message
+    });
   }
 
 };

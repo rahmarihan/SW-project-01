@@ -34,8 +34,21 @@ router.get('/organizer/events', protect, authorize('organizer'), getOrganizerEve
 router.put('/:id/status', protect, authorize('admin'), changeEventStatus);
 
 
+
 router.post('/', authorize('organizer'),createEvent);
 
 router.get('/', getAllEvents);
 
 module.exports = router;
+
+router.get(
+  ' /api/v1/users/events',
+  authenticate,
+  authorize('organizer'),  // Only organizers can access
+  eventController.getOrganizerEvents
+);
+
+
+
+
+
