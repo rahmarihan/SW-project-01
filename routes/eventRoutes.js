@@ -11,7 +11,10 @@ const {
 } = require('../controllers/eventController');
 
 
-const { protect, authorize } = require('../middleware/Authentication.js');
+
+const  protect = require('middleware\Authentication.js');
+const  authorize = require('middleware\Authorization.js');
+
 
 
 // API 1: GET /api/v1/users/events/analytics (Organizer)
