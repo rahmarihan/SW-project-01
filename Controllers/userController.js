@@ -8,6 +8,9 @@ const roleCheck = require('../middleware/Authorization');
 const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
     
+    console.log('Register Request Body:', req.body);
+
+
     try {
         // Check if user exists
         const userExists = await User.findOne({ email });
@@ -34,9 +37,11 @@ const registerUser = async (req, res) => {
             token
         });
     } catch (error) {
-        console.error(error);
+        console.error('Register Error:', error.message); // Log the error message
+        console.error('Stack Trace:', error.stack);      // Log the stack trace for more context
         res.status(500).json({ message: 'Server error' });
     }
+    
 };
 
 // @desc    Authenticate user
@@ -131,10 +136,12 @@ const updateUserProfile = async (req, res) => {
 
 // Generate JWT
 const generateToken = (id) => {
+    console.log("JWT_SECRET:", process.env.JWT_SECRET);  // Add this to debug
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: '30d'
     });
 };
+
 
 module.exports = {
     registerUser,

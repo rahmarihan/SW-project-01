@@ -1,9 +1,11 @@
+require('dotenv').config(); // Ensure this is at the top of your app.js or index.js
 const express = require("express")
 const mongoose = require("mongoose")
 const cookieParser = require('cookie-parser')
 const cors = require("cors")
 const connectDB = require('./config/db');
-
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
+console.log("NODE_ENV:", process.env.NODE_ENV);
 const app = express()
 
 connectDB()
