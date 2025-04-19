@@ -28,7 +28,7 @@ router.put('/forgetPassword', forgetPassword);
 router.put('/resetPassword', resetPassword);
 
 // Protected user profile
-router.route('/profile')
+router.route('/users/profile')
     .get(authenticate, getUserProfile)
     .put(authenticate, updateUserProfile);
 
