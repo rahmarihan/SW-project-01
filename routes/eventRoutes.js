@@ -44,9 +44,9 @@ router.put('/:id',protect,updateEvent );
 router.delete('/:id', protect, deleteEvent);
 
 // Keep your existing api routes
-router.get('/organizer/events', protect, authorize('organizer'), getOrganizerEvents);
+router.get('/users/events', protect, authorize('organizer'), getOrganizerEvents);
 router.put('/:id/status', protect, authorize('admin'), changeEventStatus);
-router.delete('',)
+
 
 
 

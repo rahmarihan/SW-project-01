@@ -51,6 +51,8 @@ const registerUser = async (req, res) => {
 // @access  Public
 const loginUser = async (req, res) => {
     try {
+
+
       const { email, password } = req.body;
   
       // Find the user by email
@@ -64,6 +66,11 @@ const loginUser = async (req, res) => {
       if (!isMatch) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
+
+      
+      console.log('Login request body:', req.body);
+      console.log('User found:', user);
+      console.log('Password match:', isMatch);
   
       // Generate a JWT token with the role included
       const token = jwt.sign(
@@ -119,32 +126,42 @@ const getUserProfile = async (req, res) => {
 // @access  Private
 const updateUserProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
-        
-        if (user) {
-            user.name = req.body.name || user.name;
-            user.email = req.body.email || user.email;
-            user.profilePicture = req.body.profilePicture || user.profilePicture;
-            
-            if (req.body.password) {
-                user.password = req.body.password;
-            }
-            
-            const updatedUser = await user.save();
-            
-            res.json({
-                _id: updatedUser._id,
-                name: updatedUser.name,
-                email: updatedUser.email,
-                role: updatedUser.role,
-                profilePicture: updatedUser.profilePicture,
-                token: generateToken(updatedUser._id)
-            });
-        } else {
-            res.status(404).json({ message: 'User not found' });
+        console.log('User ID from token:', req.user.id);
+        console.log('Request body:', req.body);
+
+        // Find the user by ID
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
+
+        // Update all fields dynamically from the request body
+        await Promise.all(Object.keys(req.body).map(async (key) => {
+            if (key === 'password') {
+                // Hash the password asynchronously
+                user[key] = await bcrypt.hash(req.body[key], 10);
+            } else {
+                user[key] = req.body[key];
+            }
+        }));
+
+        // Save the updated user
+        const updatedUser = await user.save();
+
+        // Respond with the updated user details (excluding the password)
+        res.status(200).json({
+            id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            role: updatedUser.role,
+            profilePicture: updatedUser.profilePicture,
+            createdAt: updatedUser.createdAt,
+            resetToken: updatedUser.resetToken,
+            resetTokenExpiry: updatedUser.resetTokenExpiry,
+        });
     } catch (error) {
-        console.error(error);
+        console.error('Error in updateUserProfile:', error.message);
         res.status(500).json({ message: 'Server error' });
     }
 };
