@@ -56,18 +56,14 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.comparePassword = async function(candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
-
+// update this in your userSchema method if you use it
 userSchema.methods.generateAuthToken = function() {
     return jwt.sign(
-      { 
-        user: { 
-          id: this._id, 
-          role: this.role 
-        } 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' } // Token expires in 1 hour
+        { id: this._id, role: this.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
     );
-  };
+};
+
 
 module.exports = mongoose.model('User', userSchema);

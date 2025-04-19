@@ -50,38 +50,51 @@ const registerUser = async (req, res) => {
 // @route   POST /api/v1/login
 // @access  Public
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-
     try {
-        const user = await User.findOne({ email });
-
-        if (user && (await user.comparePassword(password))) {
-            const token = generateToken(user._id);
-
-            // Set token in cookie
-            res.cookie('token', token, {
-                httpOnly: true,          // Prevents JS access on client
-                secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
-                sameSite: 'strict',      // CSRF protection
-                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-            });
-
-            // Send user data without token
-            res.json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            });
-        } else {
-            res.status(401).json({ message: 'Invalid credentials' });
-        }
+      const { email, password } = req.body;
+  
+      // Find the user by email
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Check if the password is correct
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+  
+      // Generate a JWT token with the role included
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+  
+      // Set the token as a cookie
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 3600000,
+        })
+        .status(200)
+        .json({
+          token,
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
+      console.error("Error in login:", error.message);
+      res.status(500).json({ message: "Server error" });
     }
-};
-
+  };
+  
 
 
 // @desc    Get user profile
@@ -89,15 +102,14 @@ const loginUser = async (req, res) => {
 // @access  Private
 const getUserProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('-password');
-        
-        if (user) {
-            res.json(user);
-        } else {
-            res.status(404).json({ message: 'User not found' });
+        console.log('User from middleware:', req.user); // Debugging log
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
+        res.status(200).json(user);
     } catch (error) {
-        console.error(error);
+        console.error('Error in getUserProfile:', error.message);
         res.status(500).json({ message: 'Server error' });
     }
 };
@@ -197,10 +209,12 @@ const resetPassword = async (req, res) => {
 
 // Admin-specific handlers
 const getAllUsers = async (req, res) => {
+    console.log('Inside getAllUsers controller'); // Log to confirm execution
     try {
-        const users = await User.find({}).select('-password -resetToken -__v').lean();
-        res.json(users);
+        const users = await User.find().select('-password');
+        res.status(200).json(users);
     } catch (error) {
+        console.error('Error in getAllUsers:', error.message);
         res.status(500).json({ message: 'Server error' });
     }
 };

@@ -32,8 +32,10 @@ router.route('/profile')
     .get(authenticate, getUserProfile)
     .put(authenticate, updateUserProfile);
 
+
+    
 // Admin-only routes
-router.get('/', authenticate, authorize(['admin']), getAllUsers);
+router.get('/users', authenticate, authorize(['admin']), getAllUsers);
 router.get('/:id', authenticate, authorize(['admin']), getUserById);
 router.put('/:id', authenticate, authorize(['admin']), updateUserRole);
 router.delete('/:id', authenticate, authorize(['admin']), deleteUser);
