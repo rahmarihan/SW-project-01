@@ -1,5 +1,7 @@
 const Event = require('../models/Event'); // Assuming you have the Event model
 const ErrorResponse = require('../utils/errorResponse'); // Assuming you have custom error handling
+const _ = require('lodash');
+
 
 // 12 API 1: GET /api/v1/users/events/analytics (Organizer)
 exports.getOrganizerEventAnalytics = async (req, res, next) => {
@@ -351,3 +353,4 @@ exports.deleteEvent = async (req, res, next) => {
     next(err);
   }
 };
+

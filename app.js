@@ -13,15 +13,18 @@ connectDB()
 app.use(cookieParser());
 app.use(express.json())
 
+
+
 const userRoutes = require('./Routes/userRoutes')
 const eventRoutes = require('./Routes/eventRoutes')
 const bookingRoutes = require('./Routes/bookingRoutes')
 
 
-app.use('/api/v1', userRoutes);
-app.use('/api/v1/events', eventRoutes);
+// Don't apply authentication globally to all routes if not needed
+app.use('/api/v1', userRoutes); // User routes may need authentication
+app.use('/api/v1/events', eventRoutes); // Event routes - add authentication where needed
+app.use('/api/v1/bookings', bookingRoutes); // Same for bookings, only protect when needed
 
-app.use('/api/v1/bookings', bookingRoutes);
 
 
 app.get('/', (req, res) => {
