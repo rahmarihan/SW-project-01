@@ -8,7 +8,7 @@ const  authorize = require('../middleware/Authorization');
 router.post(
   '/',
   authenticate,
-  authorize('user'),
+  authorize(['user']),
   bookingController.createBooking
 );
 
@@ -16,7 +16,7 @@ router.post(
 router.get(
   '/',
   authenticate,
-  authorize('user'),
+  authorize(['user']),
   bookingController.getUserBookings
 );
 
@@ -24,14 +24,14 @@ router.get(
 router.delete(
   '/:id',
   authenticate,
-  authorize('user'),
+  authorize(['user']),
   bookingController.cancelBooking
 );
 
 router.get(
   '/:id',
   authenticate,
-  authorize('user'), // Only standard users can access
+  authorize(['user']), // Only standard users can access
   bookingController.getBookingDetails
 );
 

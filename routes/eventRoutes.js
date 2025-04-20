@@ -19,7 +19,7 @@ const  authorize = require('../middleware/Authorization');
 
 
 // API 12: GET /api/v1/users/events/analytics (Organizer)
-router.get('/users/events/analytics', protect, authorize('organizer'), getOrganizerEventAnalytics);
+router.get('/users/events/analytics', protect, authorize(['organizer']), getOrganizerEventAnalytics);
 
 // API 18: GET /api/v1/events/:id (Public)
 //router.get('/:id', getSingleEvent);
@@ -46,8 +46,8 @@ router.put('/:id',protect,updateEvent );
 router.delete('/:id', protect, deleteEvent);
 
 // Keep your existing api routes
-router.get('/users/events', protect, authorize('organizer'), getOrganizerEvents);
-router.put('/:id/status', protect, authorize('admin'), changeEventStatus);
+router.get('/users/events', protect, authorize(['organizer']), getOrganizerEvents);
+router.put('/:id/status', protect, authorize(['admin']), changeEventStatus);
 
 
 
