@@ -179,50 +179,68 @@ const generateToken = (id) => {
 // @route   PUT /api/v1/forgetPassword
 // @access  Public
 const forgetPassword = async (req, res) => {
-    const { email } = req.body;
+    console.log("forgetPassword function triggered");
+    const { email, newPassword } = req.body;
 
     try {
+        if (!email || !newPassword) {
+            return res.status(400).json({ message: "Email and new password are required" });
+        }
+
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
-        user.resetToken = crypto.randomBytes(20).toString('hex');
-        user.resetTokenExpiry = Date.now() + 600000; // 10 mins
-        await user.save();
+        // ✅ Do NOT hash it here
+        user.password = newPassword;
 
-        res.json({
-            message: 'Reset token generated (simulated email)',
-            token: user.resetToken
-        });
+        console.log("Password before save:", user.password);
+        await user.save(); // pre-save hook will hash it
+        console.log("Password after save (should be hashed):", user.password);
+
+        console.log("Password updated successfully");
+        res.status(200).json({ message: "Password updated successfully" });
+
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error("Error in forgetPassword:", error.message);
+        res.status(500).json({ message: "Server error, please try again later" });
     }
 };
 
 // @desc    Reset password using token
 // @route   PUT /api/v1/resetPassword
 // @access  Public
-const resetPassword = async (req, res) => {
-    const { token, newPassword } = req.body;
-
-    try {
-        const user = await User.findOne({
-            resetToken: token,
-            resetTokenExpiry: { $gt: Date.now() }
-        });
-
-        if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
-
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(newPassword, salt);
-        user.resetToken = undefined;
-        user.resetTokenExpiry = undefined;
-        await user.save();
-
-        res.json({ message: 'Password reset successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-};
+// const resetPassword = async (req, res) => {
+//     const { email, newPassword, token } = req.body;
+  
+//     try {
+//       const user = await User.findOne({ email });
+  
+//       if (
+//         !user ||
+//         user.resetToken !== token ||
+//         user.resetTokenExpiry < Date.now()
+//       ) {
+//         return res.status(400).json({ message: 'Invalid or expired token' });
+//       }
+  
+//       // Update password
+//       const salt = await bcrypt.genSalt(10);
+//       user.password = await bcrypt.hash(newPassword, salt);
+  
+//       // Clear reset token and expiry
+//       user.resetToken = undefined;
+//       user.resetTokenExpiry = undefined;
+  
+//       await user.save();
+  
+//       res.json({ message: 'Password successfully reset' });
+  
+//     } catch (error) {
+//       res.status(500).json({ message: 'Server error' });
+//     }
+//   };
 
 // Admin-specific handlers
 const getAllUsers = async (req, res) => {
@@ -299,7 +317,6 @@ module.exports = {
     getUserProfile,
     updateUserProfile,
     forgetPassword,
-    resetPassword,
     getAllUsers,
     getUserById,
     updateUserRole,

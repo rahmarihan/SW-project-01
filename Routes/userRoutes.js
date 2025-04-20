@@ -12,7 +12,6 @@ const {
     getUserProfile,
     updateUserProfile,
     forgetPassword,
-    resetPassword,
     getAllUsers,
     getUserById,
     updateUserRole,
@@ -25,7 +24,6 @@ const {
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.put('/forgetPassword', forgetPassword);
-router.put('/resetPassword', resetPassword);
 
 // Protected user profile
 router.route('/users/profile')
