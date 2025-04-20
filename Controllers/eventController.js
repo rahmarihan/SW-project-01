@@ -174,38 +174,38 @@ exports.changeEventStatus = async (req, res, next) => {
 //API 16: create a new event (POST) /api/v1/events (Organizer)
 exports.createEvent = async (req, res, next) => {
   try {
-    // 1. Validate required fields
-    const { title, date, location, ticketPrice, totalTickets } = req.body;
-    if (!title || !date || !location || !ticketPrice || !totalTickets) {
-      return next(new ErrorResponse('Missing required fields', 400));
-    }
 
-    // 2. Create event (auto-set organizer from JWT)
-    const event = await Event.create({
-      ...req.body,
-      organizer: req.user.id,  // From JWT
-      status: 'pending',       // Default status
-      remainingTickets: totalTickets // Initialize availability
-    });
+    console.log('Request body:', req.body);
 
-    // 3. Return success response
-    res.status(201).json({
-      success: true,
-      message: 'Event created successfully (pending admin approval)',
-      data: {
-        id: event._id,
-        title: event.title,
-        date: event.date,
-        status: event.status
+      const { title, date, location, ticketPrice, totalTickets } = req.body;
+
+      if (!title || !date || !location || !ticketPrice || !totalTickets) {
+          return next(new ErrorResponse('Missing required fields', 400));
       }
-    });
+
+      const event = await Event.create({
+          ...req.body,
+          organizer: req.user.id,  // From JWT
+          status: 'pending',       // Default status
+          remainingTickets: totalTickets // Initialize availability
+      });
+
+      res.status(201).json({
+          success: true,
+          message: 'Event created successfully (pending admin approval)',
+          data: {
+              id: event._id,
+              title: event.title,
+              date: event.date,
+              status: event.status
+          }
+      });
 
   } catch (err) {
-    // Handle validation errors
-    if (err.name === 'ValidationError') {
-      return next(new ErrorResponse(Object.values(err.errors).map(e => e.message).join(', '), 400));
-    }
-    next(err);
+      if (err.name === 'ValidationError') {
+          return next(new ErrorResponse(Object.values(err.errors).map(e => e.message).join(', '), 400));
+      }
+      next(err);
   }
 };
 

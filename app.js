@@ -19,7 +19,7 @@ const bookingRoutes = require('./Routes/bookingRoutes')
 
 
 app.use('/api/v1', userRoutes);
-app.use('/api/v1/Event', eventRoutes);
+app.use('/api/v1/events', eventRoutes);
 app.use('/api/v1/Booking', bookingRoutes);
 
 app.get('/', (req, res) => {

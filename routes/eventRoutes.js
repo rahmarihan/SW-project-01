@@ -29,7 +29,7 @@ router.get('/users/events/analytics', protect, authorize('organizer'), getOrgani
 
 //elena´s api
 //API 16: create a new event (POST) /api/v1/events (Organizer)
-router.post('/',protect,authorize('organizer'), createEvent);
+router.post('/',protect,authorize(['organizer']), createEvent);
 
 //API 17: GET /api/v1/events (public endpoint)
 router.get('/', getAllPublicEvents); 
