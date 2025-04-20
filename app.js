@@ -14,13 +14,15 @@ app.use(cookieParser());
 app.use(express.json())
 
 const userRoutes = require('./Routes/userRoutes')
-const eventRoutes = require('./Routes/eventRoutes')
+const eventRoutes = require('./Routes/eventRoutes');
 const bookingRoutes = require('./Routes/bookingRoutes')
 
+console.log('Event routes loaded'); // Debugging log
+app.use('/api/v1', eventRoutes);
 
 app.use('/api/v1', userRoutes);
-app.use('/api/v1/Event', eventRoutes);
-app.use('/api/v1/Booking', bookingRoutes);
+
+app.use('/api/v1', bookingRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({ 

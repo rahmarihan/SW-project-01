@@ -80,6 +80,7 @@ exports.updateEventDetails = async (req, res, next) => {
 // 11 Get all events created by the current organizer (get current user's events)
 exports.getOrganizerEvents = async (req, res) => {
   try {
+    console.log('getOrganizerEvents called'); // Debugging log
     const events = await Event.find({ 
       organizer: req.user._id  // Filter by logged-in organizer
     }).sort({ createdAt: -1 });  // Newest first
@@ -90,6 +91,7 @@ exports.getOrganizerEvents = async (req, res) => {
       events
     });
   } catch (error) {
+    console.error('Error in getOrganizerEvents:', error.message); // Debugging log
     res.status(500).json({
       success: false,
       message: 'Error fetching organizer events',
