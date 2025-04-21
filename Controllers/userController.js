@@ -4,14 +4,15 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const protect  =  require('../middleware/Authentication');
 const roleCheck = require('../middleware/Authorization');
+const secretKey = process.env.JWT_SECRET;
+
 // @desc    Register a new user
 // @route   POST /api/v1/register
 // @access  Public
 const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
-    
-    console.log('Register Request Body:', req.body);
 
+    console.log("Registration Request Body:", req.body);
 
     try {
         // Check if user exists
@@ -19,88 +20,107 @@ const registerUser = async (req, res) => {
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
-        
+
         // Create user
         const user = await User.create({
             name,
             email,
-            password,
-            role: role || 'user'
+            password,  // Store the hashed password
+            role: role || 'user',
         });
-        
-        // Generate token
+
+        // Generate a JWT token
         const token = generateToken(user._id);
-        
+
         res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
-            token
+            //token
         });
+        res.status(201).json({ message: "User registered", user });
+
     } catch (error) {
-        console.error('Register Error:', error.message); // Log the error message
-        console.error('Stack Trace:', error.stack);      // Log the stack trace for more context
-        res.status(500).json({ message: 'Server error' });
+        console.error("Register Error:", error.message);
+        res.status(500).json({
+            message: "Server error",
+            error: process.env.NODE_ENV === 'development' ? error.message : null
+        });
     }
-    
 };
+
+
 
 // @desc    Authenticate user
 // @route   POST /api/v1/login
 // @access  Public
+//const bcrypt = require('bcryptjs');
+//const jwt = require('jsonwebtoken');
+
 const loginUser = async (req, res) => {
+    const { email, password } = req.body;
+
     try {
+        // 🧪 Step 1: Log the incoming request body
+        console.log("Login Request Body:", req.body);
 
+        // Find the user by email
+        const user = await User.findOne({ email });
+        console.log('User from database:', user);
 
-      const { email, password } = req.body;
-  
-      // Find the user by email
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      // Check if the password is correct
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
-      }
+        if (!user) {
+            console.log("User not found with email:", email);
+            return res.status(404).json({ message: "User not found" });
+        }
 
-      
-      console.log('Login request body:', req.body);
-      console.log('User found:', user);
-      console.log('Password match:', isMatch);
-  
-      // Generate a JWT token with the role included
-      const token = jwt.sign(
-        { id: user._id, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
-  
-      // Set the token as a cookie
-      res
-        .cookie("token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          maxAge: 3600000,
+        // 🧪 Step 2: Compare the provided password with the hashed password in the database
+        console.log("Entered password:", password);
+        console.log("Stored password hash:", user.password);
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log("Password match status:", isMatch);
+
+        if (!isMatch) {
+            console.log("Invalid credentials");
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        // 🧪 Step 3: Log the JWT secret and user information before generating token
+        console.log("JWT_SECRET:", process.env.JWT_SECRET);
+        console.log("Generating token for user:", user);
+
+        // Generate a JWT token with the user's ID, email, and role
+        const token = jwt.sign(
+            { id: user._id, email: user.email, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        // Set the token as a cookie and send response
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 3600000, // Token expiry (1 hour)
         })
         .status(200)
         .json({
-          token,
-          user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-          },
+            token,  // Send token in the response body
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
         });
     } catch (error) {
-      console.error("Error in login:", error.message);
-      res.status(500).json({ message: "Server error" });
+        console.error("Error in login:", error.message);
+        res.status(500).json({ message: "Server error" });
     }
-  };
+};
+
+
+
   
 
 
@@ -124,47 +144,45 @@ const getUserProfile = async (req, res) => {
 // @desc    Update user profile
 // @route   PUT /api/v1/users/profile
 // @access  Private
+// @desc    Update user profile
+// @route   PUT /api/v1/users/profile
+// @access  Private
 const updateUserProfile = async (req, res) => {
     try {
-        console.log('User ID from token:', req.user.id);
-        console.log('Request body:', req.body);
-
-        // Find the user by ID
         const user = await User.findById(req.user.id);
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: "User not found" });
         }
 
-        // Update all fields dynamically from the request body
-        await Promise.all(Object.keys(req.body).map(async (key) => {
-            if (key === 'password') {
-                // Hash the password asynchronously
-                user[key] = await bcrypt.hash(req.body[key], 10);
-            } else {
-                user[key] = req.body[key];
-            }
-        }));
+        // Update fields
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
 
-        // Save the updated user
+        // ✅ Just assign the plain password – let pre-save hook hash it
+        if (req.body.password) {
+            user.password = req.body.password;
+        }
+
         const updatedUser = await user.save();
 
-        // Respond with the updated user details (excluding the password)
         res.status(200).json({
-            id: updatedUser._id,
-            name: updatedUser.name,
-            email: updatedUser.email,
-            role: updatedUser.role,
-            profilePicture: updatedUser.profilePicture,
-            createdAt: updatedUser.createdAt,
-            resetToken: updatedUser.resetToken,
-            resetTokenExpiry: updatedUser.resetTokenExpiry,
+            message: "Profile updated successfully",
+            user: {
+                id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                role: updatedUser.role
+            }
         });
+
     } catch (error) {
-        console.error('Error in updateUserProfile:', error.message);
-        res.status(500).json({ message: 'Server error' });
+        console.error("Error updating profile:", error.message);
+        res.status(500).json({ message: "Server error" });
     }
 };
+
+
 
 // Generate JWT
 const generateToken = (id) => {
@@ -173,6 +191,8 @@ const generateToken = (id) => {
         expiresIn: '30d'
     });
 };
+
+
 
 
 // @desc    Send password reset token
