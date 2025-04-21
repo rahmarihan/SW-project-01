@@ -4,9 +4,6 @@ const secretKey = process.env.JWT_SECRET;
 module.exports = function authenticationMiddleware(req, res, next) {
     console.log('Inside authentication middleware'); // Log to confirm execution
     
-    // Log cookies and headers for debugging
-    console.log('Cookies:', req.cookies);
-    console.log('Headers:', req.headers);
 
     if (!secretKey) {
         console.error("❗ Missing JWT_SECRET in environment variables");
@@ -38,6 +35,9 @@ module.exports = function authenticationMiddleware(req, res, next) {
         req.user = decoded;  // This sets the decoded token to req.user
         next();
     });
+
+    console.log('Authenticated User:', req.user);
+
     
     
 };
