@@ -1,120 +1,114 @@
+// controllers/bookingController.js
+
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
 
-// Task: Authenticated standard users can book tickets of an event
-exports.createBooking = async (req, res) => {
+// ✅ Create Booking
+const createBooking = async (req, res) => {
   try {
-    const { eventId, numberOfTickets } = req.body;
-    const userId = req.user._id;
+    const { event, numberOfTickets } = req.body;
 
-    // Validation
-    if (!eventId || !numberOfTickets || numberOfTickets < 1) {
-      return res.status(400).json({ error: 'Invalid input data' });
+    const selectedEvent = await Event.findById(event);
+    if (!selectedEvent) {
+      return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Find event and check availability
-    const event = await Event.findById(eventId);
-    if (!event) {
-      return res.status(404).json({ error: 'Event not found' });
+    if (selectedEvent.availableTickets < numberOfTickets) {
+      return res.status(400).json({ message: 'Not enough tickets available' });
     }
 
-    // Check ticket availability
-    if (event.ticketsAvailable < numberOfTickets) {
-      return res.status(400).json({ 
-        error: 'Not enough tickets available',
-        ticketsAvailable: event.ticketsAvailable
-      });
-    }
+    const totalPrice = selectedEvent.price * numberOfTickets;
 
-    // Calculate total price
-    const totalPrice = event.price * numberOfTickets;
-
-    // Create booking
-    const booking = await Booking.create({
-      user: userId,
-      event: eventId,
+    const booking = new Booking({
+      user: req.user.id,
+      event,
       numberOfTickets,
-      totalPrice
+      totalPrice,
     });
 
-    // Update available tickets
-    event.ticketsAvailable -= numberOfTickets;
-    await event.save();
+    const savedBooking = await booking.save();
 
-    res.status(201).json(booking);
+    // Reduce the number of available tickets
+    selectedEvent.availableTickets -= numberOfTickets;
+    await selectedEvent.save();
 
+    res.status(201).json({
+      success: true,
+      message: 'Booking created successfully',
+      data: savedBooking
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error creating booking:", error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Task: Authenticated standard users can view their bookings
-exports.getUserBookings = async (req, res) => {
+
+
+// ✅ Get Bookings of Current User
+const getUserBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({ user: req.user._id })
-      .populate('event', 'title date location price')
-      .sort({ createdAt: -1 });
-
-    res.status(200).json(bookings);
+    const bookings = await Booking.find({ user: req.user.id }).populate('event');
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      data: bookings
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error fetching user bookings:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Task: Authenticated standard users can cancel their tickets
-exports.cancelBooking = async (req, res) => {
+// ✅ Get Booking by ID
+const getBookingDetails = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
-    
-    // Check if booking exists
-    if (!booking) {
-      return res.status(404).json({ error: 'Booking not found' });
-    }
-
-    // Check if user owns the booking
-    if (booking.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Unauthorized action' });
-    }
-
-    // Check if already canceled
-    if (booking.status === 'canceled') {
-      return res.status(400).json({ error: 'Booking already canceled' });
-    }
-
-    // Find event and restore tickets
-    const event = await Event.findById(booking.event);
-    if (event) {
-      event.ticketsAvailable += booking.numberOfTickets;
-      await event.save();
-    }
-
-    // Update booking status
-    booking.status = 'canceled';
-    await booking.save();
-
-    res.status(200).json({ message: 'Booking canceled successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-
-// Task: Authenticated users can get details of a specific booking
-exports.getBookingDetails = async (req, res) => {
-  try {
-    const booking = await Booking.findById(req.params.id).populate('event');
 
     if (!booking) {
-      return res.status(404).json({ error: 'Booking not found' });
+      return res.status(404).json({ message: 'Booking not found' });
     }
 
-    // Check if the logged-in user is the one who made the booking
-    if (booking.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Unauthorized access' });
+    // Only allow if the booking belongs to the logged-in user
+    if (booking.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Unauthorized to view this booking' });
     }
 
     res.status(200).json(booking);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching booking details:', error);
+    res.status(500).json({ message: 'Server error' });
   }
+};
+
+// ✅ Cancel Booking
+const cancelBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      { status: 'canceled' },
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Booking canceled successfully',
+      data: booking
+    });
+  } catch (error) {
+    console.error("Error canceling booking:", error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ✅ Export them all
+module.exports = {
+  createBooking,
+  getUserBookings,
+  getBookingDetails,
+  cancelBooking
 };

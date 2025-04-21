@@ -27,3 +27,4 @@ module.exports = function authorizationMiddleware(...roles) {
         next(); // Proceed to the next middleware if authorized
     };
 };
+

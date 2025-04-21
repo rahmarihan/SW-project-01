@@ -6,78 +6,57 @@ const _ = require('lodash');
 // 12 API 1: GET /api/v1/users/events/analytics (Organizer)
 exports.getOrganizerEventAnalytics = async (req, res, next) => {
   try {
-    const events = await Event.find({ 
-      organizer: req.user.id,
-      status: 'approved' // Only show approved events
+    // Fetch all events for the current organizer
+    const events = await Event.find({ organizer: req.user.id });
+
+    // Initialize groups
+    const grouped = {
+      approved: [],
+      pending: [],
+      declined: []
+    };
+
+    // Group events by status and compute analytics
+    events.forEach(event => {
+      const sold = event.totalTickets - event.remainingTickets;
+      const percentage = ((sold / event.totalTickets) * 100).toFixed(2);
+      const revenue = (sold * event.ticketPrice).toFixed(2);
+
+      const eventData = {
+        eventId: event._id,
+        title: event.title,
+        tickets: {
+          total: event.totalTickets,
+          sold,
+          percentage: parseFloat(percentage)
+        },
+        revenue: parseFloat(revenue)
+      };
+
+      if (grouped[event.status]) {
+        grouped[event.status].push(eventData);
+      }
     });
 
-    const analytics = events.map(event => ({
-      eventId: event._id,
-      title: event.title,
-      tickets: {
-        total: event.totalTickets,
-        sold: event.totalTickets - event.remainingTickets,
-        percentage: ((event.totalTickets - event.remainingTickets) / event.totalTickets * 100).toFixed(2)
-      },
-      revenue: (event.ticketPrice * (event.totalTickets - event.remainingTickets)).toFixed(2)
-    }));
+    // Prepare response
+    const graphData = {};
+    Object.keys(grouped).forEach(status => {
+      graphData[status] = {
+        labels: grouped[status].map(e => e.title),
+        values: grouped[status].map(e => e.tickets.percentage)
+      };
+    });
 
-    res.status(200).json({ success: true, data: analytics });
+    res.status(200).json({
+      success: true,
+      groupedAnalytics: grouped,
+      graphData
+    });
   } catch (err) {
     next(err);
   }
 };
 
-/* 18 API 2: GET /api/v1/events/:id (Public)
-exports.getSingleEvent = async (req, res, next) => {
-  try {
-    const event = await Event.findOne({ 
-      _id: req.params.id,
-      status: 'approved' // Only accessible if approved
-    }).populate('organizer', 'name email');
-
-    if (!event) {
-      return next(new ErrorResponse('Event not found or not approved', 404));
-    }
-
-    res.status(200).json({ success: true, data: event });
-  } catch (err) {
-    next(err);
-  }
-};
-*/
-
-/* 19 API 3: PUT /api/v1/events/:id (Organizer/Admin)
-exports.updateEventDetails = async (req, res, next) => {
-  try {
-    let event = await Event.findById(req.params.id);
-    
-    // Authorization check
-    if (event.organizer.toString() !== req.user.id && req.user.role !== 'admin') {
-      return next(new ErrorResponse('Not authorized to update this event', 403));
-    }
-
-    // Organizers can only update specific fields
-    if (req.user.role === 'organizer') {
-      const { date, location, totalTickets } = req.body;
-      event = await Event.findByIdAndUpdate(req.params.id, 
-        { date, location, totalTickets },
-        { new: true, runValidators: true }
-      );
-    } else {
-      // Admins can update any field
-      event = await Event.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-      });
-    }
-
-    res.status(200).json({ success: true, data: event });
-  } catch (err) {
-    next(err);
-  }
-};
-*/
 
 // 11 Get all events created by the current organizer (get current user's events)
 exports.getOrganizerEvents = async (req, res) => {
@@ -100,37 +79,6 @@ exports.getOrganizerEvents = async (req, res) => {
   }
 };
 
-/*16 API for creating an event
-exports.createEvent = async (req, res) => {
-const { name, description, date, location } = req.body;
-
-try {
-  const event = await Event.create({
-    name,
-    description,
-    date,
-    location,
-    organizer: req.user._id // Save the organizer's ID
-  });
-
-  res.status(201).json(event);
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ message: 'Server error' });
-}
-}; */
-
-/* 17 Get all events (for public view)
-exports.getAllEvents = async (req, res) => {
-  try {
-    const events = await Event.find().populate('organizer', 'name email');
-    res.status(200).json(events);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-*/
 
 // task c.4 Change Event Status (Admin only)
 exports.changeEventStatus = async (req, res, next) => {

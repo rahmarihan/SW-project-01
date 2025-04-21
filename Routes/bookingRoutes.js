@@ -4,6 +4,14 @@ const bookingController = require('../controllers/bookingController');
 const  authenticate = require('../middleware/Authentication');
 const  authorize = require('../middleware/Authorization');
 
+const {
+  createBooking,
+  getUserBookings,
+  getBookingDetails,
+  cancelBooking
+} = require('../controllers/bookingController');
+
+
 // Book tickets (Authenticated users only)
 router.post(
   '/',
@@ -12,9 +20,9 @@ router.post(
   bookingController.createBooking
 );
 
-// Get user bookings (Authenticated users only)
+// In bookingRoutes.js, instead of GET '/' use something specific:
 router.get(
-  '/',
+  '/user-bookings',
   authenticate,
   authorize(['user']),
   bookingController.getUserBookings

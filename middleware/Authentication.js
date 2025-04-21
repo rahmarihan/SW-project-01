@@ -45,6 +45,7 @@ module.exports = function authenticationMiddleware(req, res, next) {
         req.user = decoded;  // This sets the decoded token to req.user
         next();
     });
-    
-    
+
+    console.log('Authenticated User:', req.user);
+
 };
