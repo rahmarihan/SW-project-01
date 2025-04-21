@@ -1,120 +1,48 @@
-const Booking = require('../models/Booking');
-const Event = require('../models/Event');
-
-// Task: Authenticated standard users can book tickets of an event
-exports.createBooking = async (req, res) => {
+createBooking: async (req, res) => {
   try {
-    const { eventId, numberOfTickets } = req.body;
-    const userId = req.user._id;
+    console.log("🔐 User from token:", req.user);
 
-    // Validation
-    if (!eventId || !numberOfTickets || numberOfTickets < 1) {
-      return res.status(400).json({ error: 'Invalid input data' });
-    }
+    const userId = req.user.userId;
+    const { eventId, numOfTickets } = req.body;
 
-    // Find event and check availability
+    // 1. Check if event exists
     const event = await Event.findById(eventId);
     if (!event) {
-      return res.status(404).json({ error: 'Event not found' });
+      return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Check ticket availability
-    if (event.ticketsAvailable < numberOfTickets) {
-      return res.status(400).json({ 
-        error: 'Not enough tickets available',
-        ticketsAvailable: event.ticketsAvailable
-      });
+    // 2. Check available tickets
+    if (event.remainingTickets < numOfTickets) {
+      return res.status(400).json({ message: 'Not enough tickets available' });
     }
 
-    // Calculate total price
-    const totalPrice = event.price * numberOfTickets;
+    // 3. Calculate total price
+    const totalPrice = numOfTickets * event.ticketPrice;
 
-    // Create booking
-    const booking = await Booking.create({
-      user: userId,
-      event: eventId,
-      numberOfTickets,
-      totalPrice
+    // 4. Update ticket count atomically
+    await Event.findByIdAndUpdate(eventId, {
+      $inc: { remainingTickets: -numOfTickets }
     });
 
-    // Update available tickets
-    event.ticketsAvailable -= numberOfTickets;
-    await event.save();
+    // 5. Create and save the booking
+    const newBooking = new Booking({
+      user: userId,
+      event: eventId,
+      numberOfTickets: numOfTickets,
+      totalPrice,
+      status: 'Confirmed'
+    });
 
-    res.status(201).json(booking);
+    await newBooking.save();
+
+    // 6. Send response
+    return res.status(201).json({
+      message: 'Booking successful',
+      booking: newBooking
+    });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("🚨 Booking Error:", error);
+    return res.status(500).json({ message: 'Server Error while booking' });
   }
-};
-
-// Task: Authenticated standard users can view their bookings
-exports.getUserBookings = async (req, res) => {
-  try {
-    const bookings = await Booking.find({ user: req.user._id })
-      .populate('event', 'title date location price')
-      .sort({ createdAt: -1 });
-
-    res.status(200).json(bookings);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Task: Authenticated standard users can cancel their tickets
-exports.cancelBooking = async (req, res) => {
-  try {
-    const booking = await Booking.findById(req.params.id);
-    
-    // Check if booking exists
-    if (!booking) {
-      return res.status(404).json({ error: 'Booking not found' });
-    }
-
-    // Check if user owns the booking
-    if (booking.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Unauthorized action' });
-    }
-
-    // Check if already canceled
-    if (booking.status === 'canceled') {
-      return res.status(400).json({ error: 'Booking already canceled' });
-    }
-
-    // Find event and restore tickets
-    const event = await Event.findById(booking.event);
-    if (event) {
-      event.ticketsAvailable += booking.numberOfTickets;
-      await event.save();
-    }
-
-    // Update booking status
-    booking.status = 'canceled';
-    await booking.save();
-
-    res.status(200).json({ message: 'Booking canceled successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-
-// Task: Authenticated users can get details of a specific booking
-exports.getBookingDetails = async (req, res) => {
-  try {
-    const booking = await Booking.findById(req.params.id).populate('event');
-
-    if (!booking) {
-      return res.status(404).json({ error: 'Booking not found' });
-    }
-
-    // Check if the logged-in user is the one who made the booking
-    if (booking.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Unauthorized access' });
-    }
-
-    res.status(200).json(booking);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+}

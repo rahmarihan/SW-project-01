@@ -15,10 +15,11 @@ app.use(express.json())
 
 const userRoutes = require('./Routes/userRoutes')
 const eventRoutes = require('./Routes/eventRoutes');
-const bookingRoutes = require('./Routes/bookingRoutes')
+app.use('/api/v1', eventRoutes);
+const bookingRoutes = require('./Routes/bookingRoutes');
 
 console.log('Event routes loaded'); // Debugging log
-app.use('/api/v1', eventRoutes);
+
 
 app.use('/api/v1', userRoutes);
 
