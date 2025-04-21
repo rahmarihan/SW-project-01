@@ -19,6 +19,10 @@ const createBooking = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
+    if (event.status !== 'approved') {
+      return res.status(400).json({ message: 'Booking is only allowed for approved events' });
+    }
+
     // 2. Check available tickets
     if (event.remainingTickets < numOfTickets) {
       return res.status(400).json({ message: 'Not enough tickets available' });

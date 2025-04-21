@@ -1,6 +1,7 @@
 const Event = require('../models/Event'); // Assuming you have the Event model
 const ErrorResponse = require('../utils/errorResponse'); // Assuming you have custom error handling
 const _ = require('lodash');
+const mongoose = require('mongoose');
 
 
 // 12 API 1: GET /api/v1/users/events/analytics (Organizer)
@@ -63,8 +64,8 @@ exports.getOrganizerEventAnalytics = async (req, res, next) => {
 exports.getOrganizerEvents = async (req, res) => {
   try {
     const events = await Event.find({ 
-      organizer: req.user._id  // Filter by logged-in organizer
-    }).sort({ createdAt: -1 });  // Newest first
+      organizer: req.user.id
+    }).sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -145,7 +146,7 @@ exports.createEvent = async (req, res, next) => {
           success: true,
           message: 'Event created successfully (pending admin approval)',
           data: {
-              id: event._id,
+              id: event.id,
               title: event.title,
               date: event.date,
               status: event.status
