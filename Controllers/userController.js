@@ -262,43 +262,6 @@ const forgetPassword = async (req, res) => {
 
 
 
-
-
-// // @desc    Send password reset token
-// // @route   PUT /api/v1/forgetPassword
-// // @access  Public
-// const forgetPassword = async (req, res) => {
-//     console.log("forgetPassword function triggered");
-//     const { email, newPassword } = req.body;
-
-//     try {
-//         if (!email || !newPassword) {
-//             return res.status(400).json({ message: "Email and new password are required" });
-//         }
-
-//         const user = await User.findOne({ email });
-//         if (!user) {
-//             return res.status(404).json({ message: "User not found" });
-//         }
-
-//         // ✅ Do NOT hash it here
-//         user.password = newPassword;
-
-//         console.log("Password before save:", user.password);
-//         await user.save(); // pre-save hook will hash it
-//         console.log("Password after save (should be hashed):", user.password);
-
-//         console.log("Password updated successfully");
-//         res.status(200).json({ message: "Password updated successfully" });
-
-//     } catch (error) {
-//         console.error("Error in forgetPassword:", error.message);
-//         res.status(500).json({ message: "Server error, please try again later" });
-//     }
-// };
-
-
-
 // Admin-specific handlers
 const getAllUsers = async (req, res) => {
     console.log('Inside getAllUsers controller'); // Log to confirm execution
