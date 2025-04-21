@@ -2,46 +2,61 @@
 
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
+const mongoose = require('mongoose');
+
 
 // ✅ Create Booking
 const createBooking = async (req, res) => {
   try {
-    const { event, numberOfTickets } = req.body;
+    console.log("🔐 User from token:", req.user);
 
-    const selectedEvent = await Event.findById(event);
-    if (!selectedEvent) {
+    const userId = req.user.id;  // Corrected to `req.user.id` if you're using JWT payload
+    const { eventId, numOfTickets } = req.body;
+
+    // 1. Check if event exists
+    const event = await Event.findById(eventId);
+    if (!event) {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    if (selectedEvent.availableTickets < numberOfTickets) {
+    // 2. Check available tickets
+    if (event.remainingTickets < numOfTickets) {
       return res.status(400).json({ message: 'Not enough tickets available' });
     }
 
-    const totalPrice = selectedEvent.price * numberOfTickets;
+    // 3. Calculate total price
+    const totalPrice = numOfTickets * event.ticketPrice;
 
-    const booking = new Booking({
-      user: req.user.id,
-      event,
-      numberOfTickets,
+    // 4. Update ticket count atomically
+    await Event.findByIdAndUpdate(eventId, {
+      $inc: { remainingTickets: -numOfTickets }
+    });
+
+    // 5. Create and save the booking
+    const newBooking = new Booking({
+      user: userId,  // Pass the correct user ID here
+      event: eventId,
+      numberOfTickets: numOfTickets,
       totalPrice,
+      status: 'confirmed'  // Corrected to 'pending' or 'confirmed' as per your schema
     });
 
-    const savedBooking = await booking.save();
+    await newBooking.save();
 
-    // Reduce the number of available tickets
-    selectedEvent.availableTickets -= numberOfTickets;
-    await selectedEvent.save();
-
-    res.status(201).json({
-      success: true,
-      message: 'Booking created successfully',
-      data: savedBooking
+    // 6. Send response
+    return res.status(201).json({
+      message: 'Booking successful',
+      booking: newBooking
     });
+
   } catch (error) {
-    console.error("Error creating booking:", error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("🚨 Booking Error:", error);
+    return res.status(500).json({ message: 'Server Error while booking', error: error.message });
   }
 };
+
+
+
 
 
 

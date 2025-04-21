@@ -28,6 +28,7 @@ exports.getOrganizerEventAnalytics = async (req, res, next) => {
         tickets: {
           total: event.totalTickets,
           sold,
+          remaining: event.remainingTickets,
           percentage: parseFloat(percentage)
         },
         revenue: parseFloat(revenue)

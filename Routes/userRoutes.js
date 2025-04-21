@@ -22,7 +22,7 @@ const {
 } = require('../Controllers/userController');
 const { getUserBookings } = require('../Controllers/bookingController');
 const { getOrganizerEventAnalytics } = require('../Controllers/eventController');
-
+const { createBooking } = require('../Controllers/bookingController');
 
 
 // Public routes
@@ -44,6 +44,9 @@ router.get(
     authorize(['organizer']),
     getOrganizerEventAnalytics
   );
+
+
+  router.post('/bookings', authenticate, authorize(['user']), createBooking);
 
 
 // Protected user profile
