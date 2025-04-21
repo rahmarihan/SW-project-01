@@ -48,6 +48,4 @@ module.exports = function authenticationMiddleware(req, res, next) {
 
     console.log('Authenticated User:', req.user);
 
-    
-    
 };

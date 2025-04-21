@@ -13,6 +13,10 @@ const createBooking = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
+    if (selectedEvent.availableTickets < numberOfTickets) {
+      return res.status(400).json({ message: 'Not enough tickets available' });
+    }
+
     const totalPrice = selectedEvent.price * numberOfTickets;
 
     const booking = new Booking({
@@ -24,6 +28,10 @@ const createBooking = async (req, res) => {
 
     const savedBooking = await booking.save();
 
+    // Reduce the number of available tickets
+    selectedEvent.availableTickets -= numberOfTickets;
+    await selectedEvent.save();
+
     res.status(201).json({
       success: true,
       message: 'Booking created successfully',
@@ -34,6 +42,8 @@ const createBooking = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
 
 // ✅ Get Bookings of Current User
 const getUserBookings = async (req, res) => {
