@@ -6,23 +6,52 @@ const _ = require('lodash');
 // 12 API 1: GET /api/v1/users/events/analytics (Organizer)
 exports.getOrganizerEventAnalytics = async (req, res, next) => {
   try {
-    const events = await Event.find({ 
-      organizer: req.user.id,
-      status: 'approved' // Only show approved events
+    // Fetch all events for the current organizer
+    const events = await Event.find({ organizer: req.user.id });
+
+    // Initialize groups
+    const grouped = {
+      approved: [],
+      pending: [],
+      declined: []
+    };
+
+    // Group events by status and compute analytics
+    events.forEach(event => {
+      const sold = event.totalTickets - event.remainingTickets;
+      const percentage = ((sold / event.totalTickets) * 100).toFixed(2);
+      const revenue = (sold * event.ticketPrice).toFixed(2);
+
+      const eventData = {
+        eventId: event._id,
+        title: event.title,
+        tickets: {
+          total: event.totalTickets,
+          sold,
+          percentage: parseFloat(percentage)
+        },
+        revenue: parseFloat(revenue)
+      };
+
+      if (grouped[event.status]) {
+        grouped[event.status].push(eventData);
+      }
     });
 
-    const analytics = events.map(event => ({
-      eventId: event._id,
-      title: event.title,
-      tickets: {
-        total: event.totalTickets,
-        sold: event.totalTickets - event.remainingTickets,
-        percentage: ((event.totalTickets - event.remainingTickets) / event.totalTickets * 100).toFixed(2)
-      },
-      revenue: (event.ticketPrice * (event.totalTickets - event.remainingTickets)).toFixed(2)
-    }));
+    // Prepare response
+    const graphData = {};
+    Object.keys(grouped).forEach(status => {
+      graphData[status] = {
+        labels: grouped[status].map(e => e.title),
+        values: grouped[status].map(e => e.tickets.percentage)
+      };
+    });
 
-    res.status(200).json({ success: true, data: analytics });
+    res.status(200).json({
+      success: true,
+      groupedAnalytics: grouped,
+      graphData
+    });
   } catch (err) {
     next(err);
   }

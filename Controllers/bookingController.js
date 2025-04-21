@@ -63,18 +63,20 @@ const getUserBookings = async (req, res) => {
 // ✅ Get Booking by ID
 const getBookingDetails = async (req, res) => {
   try {
-    const booking = await Booking.findOne({ _id: req.params.id, user: req.user.id }).populate('event');
+    const booking = await Booking.findById(req.params.id);
 
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
     }
 
-    res.status(200).json({
-      success: true,
-      data: booking
-    });
+    // Only allow if the booking belongs to the logged-in user
+    if (booking.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Unauthorized to view this booking' });
+    }
+
+    res.status(200).json(booking);
   } catch (error) {
-    console.error("Error fetching booking details:", error);
+    console.error('Error fetching booking details:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
