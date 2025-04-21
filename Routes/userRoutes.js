@@ -5,7 +5,9 @@ const User = require('../models/User'); // Your User model
 const crypto = require('crypto'); // For generating random tokens
 const authenticate =  require('../middleware/Authentication'); // Authentication middleware
 const authorize = require('../middleware/Authorization');
-const bookingController = require('../controllers/bookingController');
+const bookingController = require('../Controllers/bookingController');
+const { getOrganizerEvents } = require('../Controllers/eventController');
+
 
 const {
     registerUser,
@@ -18,7 +20,9 @@ const {
     updateUserRole,
     deleteUser
 } = require('../Controllers/userController');
-const { getUserBookings } = require('../controllers/bookingController');
+const { getUserBookings } = require('../Controllers/bookingController');
+const { getOrganizerEventAnalytics } = require('../Controllers/eventController');
+
 
 
 // Public routes
@@ -27,6 +31,19 @@ router.post('/login', loginUser);
 router.put('/forgetPassword', forgetPassword);
 
 router.get('/users/bookings', authenticate, authorize(['user']), getUserBookings);
+router.get(
+    '/users/events',
+    authenticate,
+    authorize(['organizer']),
+    getOrganizerEvents
+  );
+
+  router.get(
+    '/users/events/analytics',
+    authenticate,
+    authorize(['organizer']),
+    getOrganizerEventAnalytics
+  );
 
 
 // Protected user profile
