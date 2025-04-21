@@ -13,12 +13,12 @@ const {
 
 
 // Book tickets (Authenticated users only)
-router.post(
-  '/',
-  authenticate,
-  authorize(['user']),
-  bookingController.createBooking
-);
+// router.post(
+//   '/',
+//   authenticate,
+//   authorize(['user']),
+//   bookingController.createBooking
+// );
 
 // In bookingRoutes.js, instead of GET '/' use something specific:
 router.get(
