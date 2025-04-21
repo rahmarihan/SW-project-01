@@ -211,7 +211,7 @@ exports.createEvent = async (req, res, next) => {
   }
 };
 
-//API 17: get list of all events (GET) /api/v1/events (public endpoint)
+//API 17: get list of all approved events (GET) /api/v1/events (public endpoint)
 exports.getAllPublicEvents = async (req, res, next) => {
   try {
     // 1. Get only APPROVED events with ticket availability
@@ -248,7 +248,39 @@ exports.getAllPublicEvents = async (req, res, next) => {
   }
 };
 
-//API 18: get details of a single event (GET) /api/v1/events/:id 
+//API 18:  Get list of all events (approved,pending,declined)
+exports.getAllEventsForAdmin = async (req, res, next) => {
+  try {
+    // 1. Get ALL events (including pending/declined)
+    const events = await Event.find()
+      .select('-__v') // Exclude version key
+      .populate('organizer', 'name email') // Include organizer info
+      .sort({ createdAt: -1 }); // Newest first
+
+    // 2. Format response
+    res.status(200).json({
+      success: true,
+      count: events.length,
+      data: events.map(event => ({
+        id: event._id,
+        title: event.title,
+        status: event.status,
+        date: event.date,
+        organizer: event.organizer,
+        tickets: {
+          total: event.totalTickets,
+          available: event.remainingTickets
+        },
+        createdAt: event.createdAt
+      }))
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+//API 19: get details of a single event (GET) /api/v1/events/:id 
 exports.getEventDetails = async (req, res, next) => {
   try {
     // 1. Find only APPROVED events
@@ -283,7 +315,7 @@ exports.getEventDetails = async (req, res, next) => {
   }
 };
 
-// API 19: update an event (PUT) /api/v1/events/:id (Organizer/Admin)
+// API 20: update an event (PUT) /api/v1/events/:id (Organizer/Admin)
 exports.updateEvent = async (req, res, next) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -323,7 +355,7 @@ exports.updateEvent = async (req, res, next) => {
   }
 };
 
-//API 20: delete an event (DELETE) /api/v1/events/:id (Organizer/Admin)
+//API 21: delete an event (DELETE) /api/v1/events/:id (Organizer/Admin)
 exports.deleteEvent = async (req, res, next) => {
   try {
     const event = await Event.findById(req.params.id);

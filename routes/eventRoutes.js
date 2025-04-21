@@ -9,6 +9,8 @@ const {
   getAllPublicEvents,
   getEventDetails,
   updateEvent,
+  getAllEventsForAdmin,
+  
 } = require('../Controllers/eventController');
 
 // Import your authentication and authorization middleware
@@ -21,15 +23,16 @@ router.get('/', getAllPublicEvents);
 // API 16: create a new event (POST) /api/v1/events (Organizer)
 router.post('/', protect, authorize(['organizer']), createEvent);
 
+//API 18:  Get list of all events (approved,pending,declined)
+router.get('/all',protect, authorize('admin'), getAllEventsForAdmin);
 
-
-// API 18: GET /api/v1/events/:id (public endpoint) - NO PROTECT NEEDED
+// API 19: GET /api/v1/events/:id (public endpoint) - NO PROTECT NEEDED
 router.get('/:id', getEventDetails);
 
-// API 20: DELETE /api/v1/events/:id (Organizer/Admin)
+// API 21: DELETE /api/v1/events/:id (Organizer/Admin)
 router.delete('/:id', protect, authorize(['organizer', 'admin']), deleteEvent);
 
-// API 19: PUT /api/v1/events/:id (Organizer/Admin)
+// API 20: PUT /api/v1/events/:id (Organizer/Admin)
 router.put('/:id', protect, authorize(['organizer', 'admin']), updateEvent);
 
 // API 12: GET /api/v1/users/events/analytics (Organizer)
