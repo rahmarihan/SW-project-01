@@ -15,11 +15,13 @@ const {
 const protect = require('../middleware/Authentication');
 const authorize = require('../middleware/Authorization');
 
+// API 17: GET /api/v1/events (public endpoint) - NO PROTECT NEEDED
+router.get('/', getAllPublicEvents);
+
 // API 16: create a new event (POST) /api/v1/events (Organizer)
 router.post('/', protect, authorize(['organizer']), createEvent);
 
-// API 17: GET /api/v1/events (public endpoint) - NO PROTECT NEEDED
-router.get('/', getAllPublicEvents);
+
 
 // API 18: GET /api/v1/events/:id (public endpoint) - NO PROTECT NEEDED
 router.get('/:id', getEventDetails);
