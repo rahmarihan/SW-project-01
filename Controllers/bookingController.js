@@ -103,6 +103,7 @@ const getBookingDetails = async (req, res) => {
 // ✅ Cancel Booking
 const cancelBooking = async (req, res) => {
   try {
+    // Step 1: Find and update the booking (mark as canceled)
     const booking = await Booking.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id },
       { status: 'canceled' },
@@ -113,16 +114,36 @@ const cancelBooking = async (req, res) => {
       return res.status(404).json({ message: 'Booking not found' });
     }
 
+    // Step 2: Find the associated event
+    const eventId = booking.event?._id || booking.event; // handle both populated or ObjectId
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Associated event not found' });
+    }
+
+    // Step 3: Update event ticket counts
+    const ticketsToReturn = booking.numberOfTickets || 1; // default to 1 if not defined
+
+    event.remainingTickets += ticketsToReturn;
+    event.soldTickets -= ticketsToReturn;
+
+    // Prevent negative values
+    if (event.soldTickets < 0) event.soldTickets = 0;
+    await event.save();
+
+    // Step 4: Respond
     res.status(200).json({
       success: true,
-      message: 'Booking canceled successfully',
+      message: 'Booking canceled and event ticket counts updated',
       data: booking
     });
   } catch (error) {
-    console.error("Error canceling booking:", error);
+    console.error("❌ Error canceling booking:", error.message, error.stack);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 // ✅ Export them all
 module.exports = {
