@@ -36,6 +36,18 @@ const userSchema = new mongoose.Schema({
     resetTokenExpiry: {
         type: Date,
         default: null
+    },
+    otp: { // Add this for OTP
+        type: String,
+        default: null
+    },
+    otpSent: { // Add this to track if OTP is sent
+        type: Boolean,
+        default: false
+    },
+    otpExpiresAt: { // Add this for OTP expiration tracking
+        type: Date,
+        default: null
     }
 });
 
@@ -56,7 +68,8 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.comparePassword = async function(candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
-// update this in your userSchema method if you use it
+
+// Method to generate JWT Token
 userSchema.methods.generateAuthToken = function() {
     return jwt.sign(
         { id: this._id, role: this.role },
@@ -64,6 +77,5 @@ userSchema.methods.generateAuthToken = function() {
         { expiresIn: '1h' }
     );
 };
-
 
 module.exports = mongoose.model('User', userSchema);

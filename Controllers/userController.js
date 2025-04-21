@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const protect  =  require('../middleware/Authentication');
 const roleCheck = require('../middleware/Authorization');
+const nodemailer = require('nodemailer');
 const secretKey = process.env.JWT_SECRET;
 
 // @desc    Register a new user
@@ -32,14 +33,14 @@ const registerUser = async (req, res) => {
         // Generate a JWT token
         const token = generateToken(user._id);
 
+        // Send the response only once
         res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
-            //token
+            token, // Include the token here if needed
         });
-        res.status(201).json({ message: "User registered", user });
 
     } catch (error) {
         console.error("Register Error:", error.message);
@@ -194,13 +195,12 @@ const generateToken = (id) => {
 
 
 
-
-// @desc    Send password reset token
+// @desc    Send password reset token with MFA (OTP)
 // @route   PUT /api/v1/forgetPassword
 // @access  Public
 const forgetPassword = async (req, res) => {
     console.log("forgetPassword function triggered");
-    const { email, newPassword } = req.body;
+    const { email, newPassword, otp } = req.body;
 
     try {
         if (!email || !newPassword) {
@@ -212,12 +212,44 @@ const forgetPassword = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // ✅ Do NOT hash it here
-        user.password = newPassword;
+        // Step 1: If OTP is not sent yet, generate and "send" it (mocking email sending)
+        if (!user.otpSent || Date.now() > user.otpExpiresAt) {
+            const generatedOtp = "123abc"; // Mock OTP generation
+            user.otp = generatedOtp; // Store OTP
+            user.otpSent = true; // Mark OTP as sent
+            user.otpExpiresAt = Date.now() + 10 * 60 * 1000; // Expiration time: 10 minutes from now
+            await user.save();
 
-        console.log("Password before save:", user.password);
-        await user.save(); // pre-save hook will hash it
-        console.log("Password after save (should be hashed):", user.password);
+            console.log(`Mock OTP sent to ${email}: ${generatedOtp}`);
+
+            return res.status(200).json({ message: "OTP sent to email (mocked)", otp: generatedOtp });
+        }
+
+        console.log(`OTP from request: ${otp}`);
+        console.log(`OTP in DB: ${user.otp}`);
+        console.log(`OTP expiry: ${user.otpExpiresAt}`);
+
+        // Step 2: If OTP is provided, verify it
+        if (otp !== user.otp) {
+            console.log("OTP verification failed.");
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        // Optional: Check if OTP has expired
+        if (Date.now() > user.otpExpiresAt) {
+            console.log("OTP has expired.");
+            return res.status(400).json({ message: "OTP has expired" });
+        }
+
+        // Step 3: If OTP is valid, update the password
+        user.password = newPassword;
+        await user.save(); // Password will be hashed by pre-save hook
+
+        // Clear OTP fields after successful password reset
+        user.otp = null;
+        user.otpSent = false;
+        user.otpExpiresAt = null;
+        await user.save();
 
         console.log("Password updated successfully");
         res.status(200).json({ message: "Password updated successfully" });
@@ -228,39 +260,44 @@ const forgetPassword = async (req, res) => {
     }
 };
 
-// @desc    Reset password using token
-// @route   PUT /api/v1/resetPassword
-// @access  Public
-// const resetPassword = async (req, res) => {
-//     const { email, newPassword, token } = req.body;
-  
+
+
+
+
+// // @desc    Send password reset token
+// // @route   PUT /api/v1/forgetPassword
+// // @access  Public
+// const forgetPassword = async (req, res) => {
+//     console.log("forgetPassword function triggered");
+//     const { email, newPassword } = req.body;
+
 //     try {
-//       const user = await User.findOne({ email });
-  
-//       if (
-//         !user ||
-//         user.resetToken !== token ||
-//         user.resetTokenExpiry < Date.now()
-//       ) {
-//         return res.status(400).json({ message: 'Invalid or expired token' });
-//       }
-  
-//       // Update password
-//       const salt = await bcrypt.genSalt(10);
-//       user.password = await bcrypt.hash(newPassword, salt);
-  
-//       // Clear reset token and expiry
-//       user.resetToken = undefined;
-//       user.resetTokenExpiry = undefined;
-  
-//       await user.save();
-  
-//       res.json({ message: 'Password successfully reset' });
-  
+//         if (!email || !newPassword) {
+//             return res.status(400).json({ message: "Email and new password are required" });
+//         }
+
+//         const user = await User.findOne({ email });
+//         if (!user) {
+//             return res.status(404).json({ message: "User not found" });
+//         }
+
+//         // ✅ Do NOT hash it here
+//         user.password = newPassword;
+
+//         console.log("Password before save:", user.password);
+//         await user.save(); // pre-save hook will hash it
+//         console.log("Password after save (should be hashed):", user.password);
+
+//         console.log("Password updated successfully");
+//         res.status(200).json({ message: "Password updated successfully" });
+
 //     } catch (error) {
-//       res.status(500).json({ message: 'Server error' });
+//         console.error("Error in forgetPassword:", error.message);
+//         res.status(500).json({ message: "Server error, please try again later" });
 //     }
-//   };
+// };
+
+
 
 // Admin-specific handlers
 const getAllUsers = async (req, res) => {
@@ -341,4 +378,37 @@ module.exports = {
     getUserById,
     updateUserRole,
     deleteUser
+};
+
+
+// Function to generate a random OTP
+const generateOTP = () => {
+    return crypto.randomBytes(3).toString('hex'); // 6-character OTP
+};
+
+
+// Function to send OTP email
+const sendOTPEmail = async (email, otp) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail', // Use your preferred email service
+        auth: {
+            user: 'your-email@example.com', // Your email
+            pass: 'your-email-password', // Your email password or app password
+        },
+    });
+
+    const mailOptions = {
+        from: 'your-email@example.com',
+        to: email,
+        subject: 'Password Reset OTP',
+        text: `Your OTP for password reset is: ${otp}`,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('OTP sent to email');
+    } catch (error) {
+        console.error('Error sending OTP email:', error);
+        throw new Error('Error sending OTP email');
+    }
 };
