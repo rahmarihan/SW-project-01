@@ -10,9 +10,9 @@ module.exports = function authenticationMiddleware(req, res, next) {
     console.log('Headers:', req.headers);
     console.log('==> Authentication middleware ran for:', req.originalUrl);
 
-    if (req.method === 'GET' && req.originalUrl === '/api/v1/events') {
-        return next();  // Skip authentication and continue to the next handler
-    }
+    // if (req.method === 'GET' && req.originalUrl === '/api/v1/events') {
+    //     return next();  // Skip authentication and continue to the next handler
+    // }
 
 
     if (!secretKey) {

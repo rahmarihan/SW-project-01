@@ -138,7 +138,7 @@ exports.changeEventStatus = async (req, res, next) => {
     const { status } = req.body;  // The new status to set
 
     // Validate status (You can add more status checks if needed)
-    const validStatuses = ['approved', 'pending', 'rejected'];
+    const validStatuses = ['approved', 'pending', 'declined'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Invalid status value' });
     }

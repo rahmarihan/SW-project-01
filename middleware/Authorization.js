@@ -6,10 +6,10 @@ module.exports = function authorizationMiddleware(...roles) {
 
         
         // Skip authorization check specifically for GET /api/v1/events route
-        if (req.method === 'GET' && req.originalUrl === '/api/v1/events') {
-            console.log('Skipping authorization for GET /api/v1/events route.');
-            return next(); // Allow the request to proceed for public routes
-        }
+        // if (req.method === 'GET' && req.originalUrl === '/api/v1/events') {
+        //     console.log('Skipping authorization for GET /api/v1/events route.');
+        //     return next(); // Allow the request to proceed for public routes
+        // }
 
         // If user object doesn't exist in the request, respond with unauthorized access
         if (!req.user) {
