@@ -1,48 +1,66 @@
-createBooking: async (req, res) => {
+const createBooking = async (req, res) => {
   try {
-    console.log("🔐 User from token:", req.user);
+    console.log('Incoming body:', req.body);
+    const { event, numberOfTickets } = req.body;
 
-    const userId = req.user.userId;
-    const { eventId, numOfTickets } = req.body;
+    // Ensure the number of tickets is valid
+    const tickets = parseInt(numberOfTickets);
+    if (isNaN(tickets) || tickets <= 0) {
+      return res.status(400).json({ message: 'Invalid number of tickets' });
+    }
 
-    // 1. Check if event exists
-    const event = await Event.findById(eventId);
-    if (!event) {
+    // Find the event by ID
+    const selectedEvent = await Event.findById(event);
+    console.log('Selected Event:', selectedEvent);
+
+    if (!selectedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // 2. Check available tickets
-    if (event.remainingTickets < numOfTickets) {
+    // Check that the event has a valid price
+    if (typeof selectedEvent.price !== 'number') {
+      return res.status(500).json({ message: 'Invalid event price' });
+    }
+
+    // Ensure enough tickets are available for the booking
+    if (selectedEvent.availableTickets < tickets) {
       return res.status(400).json({ message: 'Not enough tickets available' });
     }
 
-    // 3. Calculate total price
-    const totalPrice = numOfTickets * event.ticketPrice;
+    // Ensure the user is authenticated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
 
-    // 4. Update ticket count atomically
-    await Event.findByIdAndUpdate(eventId, {
-      $inc: { remainingTickets: -numOfTickets }
-    });
+    // Calculate the total price for the booking
+    const totalPrice = selectedEvent.price * tickets;
+    console.log('Total Price:', totalPrice);
 
-    // 5. Create and save the booking
-    const newBooking = new Booking({
-      user: userId,
-      event: eventId,
-      numberOfTickets: numOfTickets,
+    // Create the new booking document
+    const booking = new Booking({
+      user: req.user.id,
+      event,
+      numberOfTickets: tickets,
       totalPrice,
-      status: 'Confirmed'
     });
 
-    await newBooking.save();
+    // Save the booking to the database
+    const savedBooking = await booking.save();
+    console.log('Saved Booking:', savedBooking);
 
-    // 6. Send response
-    return res.status(201).json({
-      message: 'Booking successful',
-      booking: newBooking
+    // Reduce the number of available tickets for the event
+    selectedEvent.availableTickets -= tickets;
+    await selectedEvent.save();
+
+    // Send a success response
+    res.status(201).json({
+      success: true,
+      message: 'Booking created successfully',
+      data: savedBooking,
     });
-
   } catch (error) {
-    console.error("🚨 Booking Error:", error);
-    return res.status(500).json({ message: 'Server Error while booking' });
+    // Catch any errors and send a server error response
+    console.error("🔥 Caught error in createBooking:", error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
-}
+};
