@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bookingController = require('../controllers/bookingController');
+const bookingController = require('../Controllers/bookingController');
 const  authenticate = require('../middleware/Authentication');
 const  authorize = require('../middleware/Authorization');
 
@@ -9,7 +9,7 @@ const {
   getUserBookings,
   getBookingDetails,
   cancelBooking
-} = require('../controllers/bookingController');
+} = require('../Controllers/bookingController');
 
 
 // Book tickets (Authenticated users only)
