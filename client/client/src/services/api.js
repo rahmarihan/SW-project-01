@@ -2,7 +2,9 @@ import axios from 'axios';
 
 // Create Axios instance with base URL
 const api = axios.create({
-  baseURL: "http://localhost:5000", // ✅ Replace with your actual backend URL
+
+  baseURL: "http://localhost:5000/api/v1", // ✅ Replace with your actual backend URL
+
 });
 
 // Add token from localStorage (or wherever you store it) to headers

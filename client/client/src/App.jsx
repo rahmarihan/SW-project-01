@@ -1,7 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -9,25 +10,24 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginForm from './pages/LoginForm';
 import RegisterForm from './pages/RegisterForm';
 import ForgotPassword from './pages/ForgotPassword';
-import EventList from './pages/EventList';
-import AdminDashboard from './pages/AdminDashboard';
-import OrganizerPanel from './pages/OrganizerPanel';
+// import EventList from './pages/EventList';
+// import AdminDashboard from './pages/AdminDashboard';
+// import OrganizerPanel from './pages/OrganizerPanel';
 
-import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+      <>
         <Navbar />
         
         <Routes>
-          <Route path="/" element={<EventList />} />
+          {/* <Route path="/" element={<EventList />} /> */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
-          {/* Admin Only */}
+          {/* Admin Only
           <Route
             path="/admin"
             element={
@@ -35,9 +35,9 @@ function App() {
                 <AdminDashboard />
               </ProtectedRoute>
             }
-          />
+          /> */}
 
-          {/* Organizer Only */}
+          {/* Organizer Only
           <Route
             path="/organizer"
             element={
@@ -45,13 +45,12 @@ function App() {
                 <OrganizerPanel />
               </ProtectedRoute>
             }
-          />
+          /> */}
         </Routes>
 
         <Footer />
         <ToastContainer position="top-right" autoClose={3000} pauseOnHover />
-      </Router>
-    </AuthProvider>
+      </>
   );
 }
 
