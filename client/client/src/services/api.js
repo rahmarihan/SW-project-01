@@ -1,20 +1,40 @@
-import axios from "axios";
+import axios from 'axios';
 
-// Create axios instance
+// Create Axios instance with base URL
 const api = axios.create({
   baseURL: "mongodb://localhost:27017/event_ticketing", // ✅ Replace with your actual backend URL
 });
 
-// Automatically attach token to requests
-api.interceptors.request.use(
-  (config) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user?.token) {
-      config.headers.Authorization = `Bearer ${user.token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// Add token from localStorage (or wherever you store it) to headers
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token'); // or get from context/state
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => Promise.reject(error));
 
-export default api;
+// API methods
+const login = (credentials) => api.post('/auth/login', credentials);
+
+const register = (data) => api.post('/auth/register', data);
+
+const forgotPassword = (email) => api.post('/auth/forgot-password', { email });
+
+const getEvents = () => api.get('/events');
+
+const bookTicket = (eventId) => api.post(`/events/${eventId}/book`);
+
+const logout = () => {
+  // If your backend supports a logout endpoint, call it here
+  return api.post('/auth/logout');
+};
+
+export default {
+  login,
+  register,
+  forgotPassword,
+  getEvents,
+  bookTicket,
+  logout,
+};
