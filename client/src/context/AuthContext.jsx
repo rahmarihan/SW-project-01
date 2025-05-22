@@ -1,83 +1,51 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api'; // this should be a configured axios instance
+import React, { createContext, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD:client/client/src/context/AuthContext.jsx
-=======
 import api from "../services/api";
->>>>>>> master:client/src/context/AuthContext.jsx
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem('token') || '');
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const fetchProfile = async () => {
-    if (!token) return;
-    try {
-      const res = await api.get('/users/profile', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      setUser(res.data.user); // expects { user: { name, email, role, ... } }
-    } catch (err) {
-      console.error('Failed to load profile:', err);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const login = async (credentials) => {
+    setLoading(true);
     try {
-      const res = await api.post('/auth/login', credentials); // returns { token, user }
-      localStorage.setItem('token', res.data.token);
-      setToken(res.data.token);
-      setUser(res.data.user);
+      const res = await api.login(credentials);
+      const userData = res.data.user;
+      const token = res.data.token;
+
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', token);
+      setUser(userData);
       navigate('/');
+      return { success: true };
     } catch (err) {
-      throw err;
-    }
-  };
-
-  const register = async (userData) => {
-    try {
-      await api.post('/auth/register', userData);
-      navigate('/login');
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await api.get('/auth/logout'); // optional
-    } catch (err) {
-      console.warn('Logout request failed:', err);
+      return {
+        success: false,
+        message: err?.response?.data?.message || 'Login failed',
+      };
     } finally {
-      localStorage.removeItem('token');
-      setToken('');
-      setUser(null);
-      navigate('/login');
-    }
-  };
-
-  useEffect(() => {
-    if (token) {
-      fetchProfile();
-    } else {
       setLoading(false);
     }
-  }, [token]);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setUser(null);
+    navigate('/login');
+  };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, token, loading, login, register, logout, fetchProfile }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useAuth = () => useContext(AuthContext);
