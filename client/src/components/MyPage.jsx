@@ -12,7 +12,7 @@ function MyPage() {
   return (
     <div className="page-wrapper">
       <header className="navbar">
-        <h1 className="logo">My Website</h1>
+        <h1 className="logo">🎟️ My Profile </h1>
         <nav className="nav-buttons">
           <button onClick={() => navigate('/update-profile')}>Update Profile</button>
           <button onClick={logout}>Logout</button>
@@ -20,7 +20,7 @@ function MyPage() {
       </header>
 
       <main className="content">
-        <h2>Welcome, {user.name}</h2>
+        <h2>WELCOME {user.name.toUpperCase()} !</h2>
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Role:</strong> {user.role}</p>
       </main>
