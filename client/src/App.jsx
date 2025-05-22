@@ -10,6 +10,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import ForgotPassword from './components/ForgetPassword';
+import EventList from './components/EventList';
+import EventDetails from './components/EventDetails';
+import MyEvents from './components/MyEvents';
+import EventForm from './components/EventForm';
 // import EventList from './pages/EventList';
 // import AdminDashboard from './pages/AdminDashboard';
 // import OrganizerPanel from './pages/OrganizerPanel';
@@ -26,6 +30,14 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgetPassword" element={<ForgotPassword />} />
+          <Route path="/" element={<EventList />} />
+          <Route path="/events/:id" element={<EventDetails />} />
+
+          {/* Organizer routes */}
+          <Route path="/my-events" element={<MyEvents />} />
+          <Route path="/my-events/create" element={<EventForm />} />
+          <Route path="/my-events/edit/:id" element={<EventForm />} />
+
 
           {/* Admin Only
           <Route
