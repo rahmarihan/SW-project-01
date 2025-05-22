@@ -194,7 +194,6 @@ const generateToken = (id) => {
 };
 
 
-
 // @desc    Send password reset token with MFA (OTP)
 // @route   PUT /api/v1/forgetPassword
 // @access  Public
@@ -258,8 +257,7 @@ const forgetPassword = async (req, res) => {
         console.error("Error in forgetPassword:", error.message);
         res.status(500).json({ message: "Server error, please try again later" });
     }
-};
-
+}; 
 
 
 // Admin-specific handlers
@@ -344,12 +342,6 @@ module.exports = {
 };
 
 
-// Function to generate a random OTP
-const generateOTP = () => {
-    return crypto.randomBytes(3).toString('hex'); // 6-character OTP
-};
-
-
 // Function to send OTP email
 const sendOTPEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
@@ -374,4 +366,4 @@ const sendOTPEmail = async (email, otp) => {
         console.error('Error sending OTP email:', error);
         throw new Error('Error sending OTP email');
     }
-};
+}; 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 function RegisterForm() {
   const navigate = useNavigate();
@@ -8,7 +9,6 @@ function RegisterForm() {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('User');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -16,26 +16,15 @@ function RegisterForm() {
     e.preventDefault();
     setError('');
 
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // TODO: Replace with real API call
-      // Example: await api.register({ name, email, role, password });
-
-      // Simulate API success response after 1 second
-      await new Promise((r) => setTimeout(r, 1000));
-
+      await api.register({ name, email, role, password });
       setLoading(false);
-      // Redirect to login page on success
       navigate('/login');
     } catch (err) {
       setLoading(false);
-      setError(err.message || 'Registration failed');
+      setError(err.response?.data?.message || 'Registration failed');
     }
   };
 
@@ -68,8 +57,9 @@ function RegisterForm() {
       <div>
         <label>Role:</label>
         <select value={role} onChange={e => setRole(e.target.value)}>
-          <option value="User">User</option>
-          <option value="Organizer">Organizer</option>
+          <option value="user">User</option>
+          <option value="organizer">Organizer</option>
+          <option value="admin">Admin</option>
         </select>
       </div>
 
@@ -79,17 +69,6 @@ function RegisterForm() {
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          required
-          minLength={6}
-        />
-      </div>
-
-      <div>
-        <label>Confirm Password:</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
           required
           minLength={6}
         />

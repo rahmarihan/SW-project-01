@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
@@ -16,7 +16,7 @@ function LoginForm() {
     setError('');
     setLoading(true);
 
-    const result = await login(email, password);
+    const result = await login({ email, password });
     setLoading(false);
 
     if (result.success) {
@@ -29,7 +29,19 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit}>
       <h2>Login</h2>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+
+      {error && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          {error}
+          {error.toLowerCase().includes('invalid credentials') && (
+            <div style={{ marginTop: '5px' }}>
+              <a href="/forgetPassword" style={{ color: 'blue', textDecoration: 'underline' }}>
+                Forgot your password?
+              </a>
+            </div>
+          )}
+        </div>
+      )}
 
       <div>
         <label>Email:</label>

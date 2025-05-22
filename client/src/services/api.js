@@ -2,7 +2,9 @@ import axios from 'axios';
 
 // Create Axios instance with base URL
 const api = axios.create({
-  baseURL: "mongodb://localhost:27017/event_ticketing", // ✅ Replace with your actual backend URL
+
+  baseURL: "http://localhost:5000/api/v1", // ✅ Replace with your actual backend URL
+
 });
 
 // Add token from localStorage (or wherever you store it) to headers
@@ -15,11 +17,11 @@ api.interceptors.request.use(config => {
 }, error => Promise.reject(error));
 
 // API methods
-const login = (credentials) => api.post('/auth/login', credentials);
+const login = (credentials) => api.post('/login', credentials);
 
-const register = (data) => api.post('/auth/register', data);
+const register = (data) => api.post('/register', data);
 
-const forgotPassword = (email) => api.post('/auth/forgot-password', { email });
+const forgotPassword = (data) => api.put('/forgetPassword', data);
 
 const getEvents = () => api.get('/events');
 
