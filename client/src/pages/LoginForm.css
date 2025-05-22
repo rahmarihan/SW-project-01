@@ -1,0 +1,104 @@
+/* Entire page layout similar to home-page */
+.login-page {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to right, #f9f9f9, #f0f0f0);
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Center the login card */
+.login-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Login card */
+.login-form {
+  background-color: #6b78ef;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  color: white;
+  text-align: center;
+}
+
+.login-form h2 {
+  margin-bottom: 1.5rem;
+  color: white;
+}
+
+/* Form fields */
+.form-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+/* Error box */
+.login-error {
+  background-color: #ffe0e0;
+  color: #b30000;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Forgot password link */
+.forgot-password {
+  margin-top: 0.5rem;
+}
+
+.forgot-password a {
+  color: #b30000;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+
+/* Button styling */
+.login-form button {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-form button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+.login-form button:hover:not(:disabled) {
+  background-color: #111;
+}
