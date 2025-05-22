@@ -3,7 +3,6 @@ const ErrorResponse = require('../utils/errorResponse'); // Assuming you have cu
 const _ = require('lodash');
 const mongoose = require('mongoose');
 
-
 // 12 API 1: GET /api/v1/users/events/analytics (Organizer)
 exports.getOrganizerEventAnalytics = async (req, res, next) => {
   try {
@@ -59,7 +58,6 @@ exports.getOrganizerEventAnalytics = async (req, res, next) => {
   }
 };
 
-
 // 11 Get all events created by the current organizer (get current user's events)
 exports.getOrganizerEvents = async (req, res) => {
   try {
@@ -80,7 +78,6 @@ exports.getOrganizerEvents = async (req, res) => {
     });
   }
 };
-
 
 // task c.4 Change Event Status (Admin only)
 exports.changeEventStatus = async (req, res, next) => {
@@ -121,47 +118,46 @@ exports.changeEventStatus = async (req, res, next) => {
   }
 };
 
-
-//elena´s latest apis
-//API 16: create a new event (POST) /api/v1/events (Organizer)
+// elena´s latest apis
+// API 16: create a new event (POST) /api/v1/events (Organizer)
 exports.createEvent = async (req, res, next) => {
   try {
 
     console.log('Request body:', req.body);
 
-      const { title, date, location, ticketPrice, totalTickets } = req.body;
+    const { title, date, location, ticketPrice, totalTickets } = req.body;
 
-      if (!title || !date || !location || !ticketPrice || !totalTickets) {
-          return next(new ErrorResponse('Missing required fields', 400));
+    if (!title || !date || !location || !ticketPrice || !totalTickets) {
+      return next(new ErrorResponse('Missing required fields', 400));
+    }
+
+    const event = await Event.create({
+      ...req.body,
+      organizer: req.user.id,  // From JWT
+      status: 'pending',       // Default status
+      remainingTickets: totalTickets // Initialize availability
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Event created successfully (pending admin approval)',
+      data: {
+        id: event.id,
+        title: event.title,
+        date: event.date,
+        status: event.status
       }
-
-      const event = await Event.create({
-          ...req.body,
-          organizer: req.user.id,  // From JWT
-          status: 'pending',       // Default status
-          remainingTickets: totalTickets // Initialize availability
-      });
-
-      res.status(201).json({
-          success: true,
-          message: 'Event created successfully (pending admin approval)',
-          data: {
-              id: event.id,
-              title: event.title,
-              date: event.date,
-              status: event.status
-          }
-      });
+    });
 
   } catch (err) {
-      if (err.name === 'ValidationError') {
-          return next(new ErrorResponse(Object.values(err.errors).map(e => e.message).join(', '), 400));
-      }
-      next(err);
+    if (err.name === 'ValidationError') {
+      return next(new ErrorResponse(Object.values(err.errors).map(e => e.message).join(', '), 400));
+    }
+    next(err);
   }
 };
 
-//API 17: get list of all approved events (GET) /api/v1/events (public endpoint)
+// API 17: get list of all approved events (GET) /api/v1/events (public endpoint)
 exports.getAllPublicEvents = async (req, res, next) => {
   try {
     // 1. Get only APPROVED events with ticket availability
@@ -198,7 +194,7 @@ exports.getAllPublicEvents = async (req, res, next) => {
   }
 };
 
-//API 18:  Get list of all events (approved,pending,declined)
+// API 18:  Get list of all events (approved,pending,declined)
 exports.getAllEventsForAdmin = async (req, res, next) => {
   try {
     // 1. Get ALL events (including pending/declined)
@@ -230,7 +226,7 @@ exports.getAllEventsForAdmin = async (req, res, next) => {
   }
 };
 
-//API 19: get details of a single event (GET) /api/v1/events/:id 
+// API 19: get details of a single event (GET) /api/v1/events/:id 
 exports.getEventDetails = async (req, res, next) => {
   try {
     // 1. Find only APPROVED events
@@ -305,7 +301,7 @@ exports.updateEvent = async (req, res, next) => {
   }
 };
 
-//API 21: delete an event (DELETE) /api/v1/events/:id (Organizer/Admin)
+// API 21: delete an event (DELETE) /api/v1/events/:id (Organizer/Admin)
 exports.deleteEvent = async (req, res, next) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -331,6 +327,84 @@ exports.deleteEvent = async (req, res, next) => {
       message: 'Event deleted successfully'
     });
 
+  } catch (err) {
+    next(err);
+  }
+};
+
+// *** NEW API ***
+// API: Get ticket analytics for a single event by ID (Organizer/Admin)
+exports.getEventAnalyticsById = async (req, res, next) => {
+  try {
+    const eventId = req.params.id;
+
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: "Event not found" });
+    }
+
+    if (req.user.role !== "admin" && event.organizer.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: "Not authorized" });
+    }
+
+    const sold = event.totalTickets - event.remainingTickets;
+    const percentage = ((sold / event.totalTickets) * 100).toFixed(2);
+    const revenue = (sold * event.ticketPrice).toFixed(2);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        eventId: event._id,
+        title: event.title,
+        tickets: {
+          total: event.totalTickets,
+          sold,
+          remaining: event.remainingTickets,
+          percentage: parseFloat(percentage)
+        },
+        revenue: parseFloat(revenue),
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// API 22: Book tickets for an event (POST) /api/v1/events/:id/book
+exports.bookTickets = async (req, res, next) => {
+  try {
+    const eventId = req.params.id;
+    const userId = req.user.id;
+    const { ticketsToBook } = req.body;
+
+    if (!ticketsToBook || ticketsToBook < 1) {
+      return res.status(400).json({ success: false, message: 'Invalid number of tickets' });
+    }
+
+    const event = await Event.findById(eventId);
+    if (!event || event.status !== 'approved') {
+      return res.status(404).json({ success: false, message: 'Event not found or not approved' });
+    }
+
+    if (event.remainingTickets < ticketsToBook) {
+      return res.status(400).json({ success: false, message: 'Not enough tickets available' });
+    }
+
+    // Deduct tickets
+    event.remainingTickets -= ticketsToBook;
+    await event.save();
+
+    // Optional: create booking record if you have a Booking model
+    // e.g.,
+    // await Booking.create({ user: userId, event: eventId, tickets: ticketsToBook });
+
+    res.status(200).json({
+      success: true,
+      message: `${ticketsToBook} tickets booked successfully`,
+      remainingTickets: event.remainingTickets
+    });
   } catch (err) {
     next(err);
   }
