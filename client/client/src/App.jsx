@@ -12,6 +12,9 @@ import ForgotPassword from './pages/ForgotPassword';
 import EventList from './pages/EventList';
 import AdminDashboard from './pages/AdminDashboard';
 import OrganizerPanel from './pages/OrganizerPanel';
+import ProfilePage from './pages/ProfilePage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import AdminEventsPage from './pages/AdminEventsPage'; // ✅ NEW
 
 import { AuthProvider } from './context/AuthContext';
 
@@ -20,12 +23,22 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
-        
+
         <Routes>
           <Route path="/" element={<EventList />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+
+          {/* Profile (All Roles) */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute allowedRoles={['User', 'Admin', 'Event Organizer']}>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin Only */}
           <Route
@@ -33,6 +46,22 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['Admin']}>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <AdminUsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/events"
+            element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <AdminEventsPage />
               </ProtectedRoute>
             }
           />
