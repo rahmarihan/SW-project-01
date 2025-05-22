@@ -13,6 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './pages/ProfilePage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminEventsPage from './pages/AdminEventsPage'; // ✅ NEW
+import MyPage from './components/MyPage';
 
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
@@ -31,53 +32,6 @@ function App() {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgetPassword" element={<ForgotPassword />} />
 
-          {/* Profile (All Roles) */}
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute allowedRoles={['User', 'Admin', 'Event Organizer']}>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Admin Only */}
-          {/* Admin Only
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute allowedRoles={['Admin']}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/users"
-            element={
-              <ProtectedRoute allowedRoles={['Admin']}>
-                <AdminUsersPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/events"
-            element={
-              <ProtectedRoute allowedRoles={['Admin']}>
-                <AdminEventsPage />
-              </ProtectedRoute>
-            }
-          />
-          /> */}
-
-          {/* Organizer Only
-          <Route
-            path="/organizer"
-            element={
-              <ProtectedRoute allowedRoles={['Event Organizer']}>
-                <OrganizerPanel />
-              </ProtectedRoute>
-            }
-          /> */}
           
         </Routes>
 

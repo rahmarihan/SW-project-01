@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 🔹 Step 1: Import this
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import '../pages/ForgetPassword.css'; // Adjust the path if needed
 import api from '../services/api';
 
 function ForgotPassword() {
@@ -9,7 +10,7 @@ function ForgotPassword() {
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // 🔹 Step 2: Init navigation
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,8 +46,6 @@ function ForgotPassword() {
         setOtp('');
         setNewPassword('');
         setStep(1);
-
-        // 🔹 Step 3: Redirect to login after success
         navigate('/login');
       } catch (err) {
         toast.error(err.response?.data?.message || 'Failed to reset password');
@@ -57,45 +56,23 @@ function ForgotPassword() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Forgot Password</h2>
+    <div className="forgot-password-page">
+      <form onSubmit={handleSubmit} className="forgot-password-form">
+        <h2>Forgot Password</h2>
 
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          disabled={step === 2}
-        />
-      </div>
-
-      {step === 1 && (
-        <div>
-          <label>New Password:</label>
+        <div className="form-group">
+          <label>Email:</label>
           <input
-            type="password"
-            value={newPassword}
-            onChange={e => setNewPassword(e.target.value)}
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             required
+            disabled={step === 2}
           />
         </div>
-      )}
 
-      {step === 2 && (
-        <>
-          <div>
-            <label>OTP:</label>
-            <input
-              type="text"
-              value={otp}
-              onChange={e => setOtp(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
+        {step === 1 && (
+          <div className="form-group">
             <label>New Password:</label>
             <input
               type="password"
@@ -104,17 +81,41 @@ function ForgotPassword() {
               required
             />
           </div>
-        </>
-      )}
+        )}
 
-      <button type="submit" disabled={loading}>
-        {loading
-          ? 'Processing...'
-          : step === 1
-          ? 'Send OTP'
-          : 'Reset Password'}
-      </button>
-    </form>
+        {step === 2 && (
+          <>
+            <div className="form-group">
+              <label>OTP:</label>
+              <input
+                type="text"
+                value={otp}
+                onChange={e => setOtp(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>New Password:</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                required
+              />
+            </div>
+          </>
+        )}
+
+        <button type="submit" disabled={loading}>
+          {loading
+            ? 'Processing...'
+            : step === 1
+            ? 'Send OTP'
+            : 'Reset Password'}
+        </button>
+      </form>
+    </div>
   );
 }
 
