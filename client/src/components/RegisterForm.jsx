@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api'; 
 
 function RegisterForm() {
   const navigate = useNavigate();
@@ -12,31 +13,27 @@ function RegisterForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
 
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
+  if (password !== confirmPassword) {
+    setError("Passwords don't match");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      // TODO: Replace with real API call
-      // Example: await api.register({ name, email, role, password });
+  try {
+    // ✅ Real API call to your backend
+    await api.register({ name, email, role, password });
 
-      // Simulate API success response after 1 second
-      await new Promise((r) => setTimeout(r, 1000));
-
-      setLoading(false);
-      // Redirect to login page on success
-      navigate('/login');
-    } catch (err) {
-      setLoading(false);
-      setError(err.message || 'Registration failed');
-    }
+    setLoading(false);
+    navigate('/login');
+  } catch (err) {
+    setLoading(false);
+    setError(err.response?.data?.message || 'Registration failed');
+  }
   };
 
   return (
