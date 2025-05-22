@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom"; // ⬅️ To navigate to /login and /register
-import './Home.css'; // ⬅️ Import CSS
+import './pages/Home.css'; // ⬅️ Import CSS
 
 export default function Home() {
   return (
