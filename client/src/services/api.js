@@ -21,7 +21,7 @@ const login = (credentials) => api.post('/login', credentials);
 
 const register = (data) => api.post('/register', data);
 
-const forgotPassword = (email) => api.post('/forgetPassword', { email });
+const forgotPassword = (data) => api.put('/forgetPassword', data);
 
 const getEvents = () => api.get('/events');
 
