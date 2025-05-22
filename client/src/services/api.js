@@ -1,42 +1,34 @@
-import axios from 'axios';
+// src/api/api.js
 
-// Create Axios instance with base URL
+import axios from "axios";
+
+// Create a reusable axios instance
 const api = axios.create({
-
-  baseURL: "http://localhost:5000/api/v1", // ✅ Replace with your actual backend URL
-
+  baseURL: "http://localhost:5000/api/v1", // change this to your backend URL if deployed
+  withCredentials: true, // allows sending cookies if your backend uses them
 });
 
-// Add token from localStorage (or wherever you store it) to headers
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token'); // or get from context/state
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-}, error => Promise.reject(error));
+// GET approved events with optional search & filtering
+export const getApprovedEvents = async (searchTerm = "", filter = {}) => {
+  const params = {
+    status: "approved", // Only fetch approved events
+    ...filter,
+    ...(searchTerm && { search: searchTerm }), // Include search param if provided
+  };
 
-// API methods
-const login = (credentials) => api.post('/login', credentials);
-
-const register = (data) => api.post('/register', data);
-
-const forgotPassword = (data) => api.put('/forgetPassword', data);
-
-const getEvents = () => api.get('/events');
-
-const bookTicket = (eventId) => api.post(`/events/${eventId}/book`);
-
-const logout = () => {
-  // If your backend supports a logout endpoint, call it here
-  return api.post('/auth/logout');
+  const response = await api.get("/events", { params });
+  return response.data;
 };
 
-export default {
-  login,
-  register,
-  forgotPassword,
-  getEvents,
-  bookTicket,
-  logout,
+// GET events created by the logged-in organizer
+export const getMyEvents = async () => {
+  const response = await api.get("/events/my"); // Assumes backend filters by logged-in user
+  return response.data;
 };
+
+// DELETE an event by ID
+export const deleteEvent = async (id) => {
+  await api.delete(`/events/${id}`);
+};
+
+export default api;
