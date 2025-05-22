@@ -10,9 +10,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import ForgotPassword from './components/ForgetPassword';
-// import EventList from './pages/EventList';
-// import AdminDashboard from './pages/AdminDashboard';
-// import OrganizerPanel from './pages/OrganizerPanel';
 
 
 function App() {
@@ -21,31 +18,12 @@ function App() {
         <Navbar />
         
         <Routes>
-          {/* <Route path="/" element={<EventList />} /> */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgetPassword" element={<ForgotPassword />} />
 
-          {/* Admin Only
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute allowedRoles={['Admin']}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          /> */}
-
-          {/* Organizer Only
-          <Route
-            path="/organizer"
-            element={
-              <ProtectedRoute allowedRoles={['Event Organizer']}>
-                <OrganizerPanel />
-              </ProtectedRoute>
-            }
-          /> */}
+          
         </Routes>
 
         <Footer />
