@@ -7,9 +7,9 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 
-import LoginForm from './pages/LoginForm';
-import RegisterForm from './pages/RegisterForm';
-import ForgotPassword from './pages/ForgotPassword';
+import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
+import ForgotPassword from './components/ForgetPassword';
 // import EventList from './pages/EventList';
 // import AdminDashboard from './pages/AdminDashboard';
 // import OrganizerPanel from './pages/OrganizerPanel';
@@ -25,7 +25,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/forgetPassword" element={<ForgotPassword />} />
 
           {/* Admin Only
           <Route
