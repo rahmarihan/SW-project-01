@@ -40,14 +40,14 @@ html, body {
   margin-left: 1rem;
   text-decoration: none;
   padding: 0.5rem 1rem;
-  background-color: #007bff;
+  background-color: #6b78ef;
   color: white;
   border-radius: 6px;
   transition: background-color 0.3s ease;
 }
 
 .home-nav a:hover {
-  background-color: #0056b3;
+  background-color: #6b78ef;
 }
 
 /* New: Full page container between header and footer */
@@ -63,7 +63,7 @@ html, body {
 
 .home-main-content {
   max-width: 600px;
-  background-color: #f5f5f5;
+  background-color: #6b78ef;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
