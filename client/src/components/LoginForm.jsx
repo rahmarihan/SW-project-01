@@ -16,7 +16,7 @@ function LoginForm() {
     setError('');
     setLoading(true);
 
-    const result = await login(email, password);
+   const result = await login({ email, password });
     setLoading(false);
 
     if (result.success) {

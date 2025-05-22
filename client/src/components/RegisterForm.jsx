@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api'; 
+import api from '../services/api';
 
 function RegisterForm() {
   const navigate = useNavigate();
@@ -9,31 +9,23 @@ function RegisterForm() {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('User');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
 
-  if (password !== confirmPassword) {
-    setError("Passwords don't match");
-    return;
-  }
+    setLoading(true);
 
-  setLoading(true);
-
-  try {
-    // ✅ Real API call to your backend
-    await api.register({ name, email, role, password });
-
-    setLoading(false);
-    navigate('/login');
-  } catch (err) {
-    setLoading(false);
-    setError(err.response?.data?.message || 'Registration failed');
-  }
+    try {
+      await api.register({ name, email, role, password });
+      setLoading(false);
+      navigate('/login');
+    } catch (err) {
+      setLoading(false);
+      setError(err.response?.data?.message || 'Registration failed');
+    }
   };
 
   return (
@@ -65,8 +57,9 @@ const handleSubmit = async (e) => {
       <div>
         <label>Role:</label>
         <select value={role} onChange={e => setRole(e.target.value)}>
-          <option value="User">User</option>
-          <option value="Organizer">Organizer</option>
+          <option value="user">User</option>
+          <option value="organizer">Organizer</option>
+          <option value="admin">Admin</option>
         </select>
       </div>
 
@@ -76,17 +69,6 @@ const handleSubmit = async (e) => {
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          required
-          minLength={6}
-        />
-      </div>
-
-      <div>
-        <label>Confirm Password:</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
           required
           minLength={6}
         />
