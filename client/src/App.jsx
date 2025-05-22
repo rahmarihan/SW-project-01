@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-//import Home from './pages/Home';
+import Home from './components/Home';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -17,9 +17,6 @@ import AdminEventsPage from './pages/AdminEventsPage'; // ✅ NEW
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import ForgotPassword from './components/ForgetPassword';
-// import EventList from './pages/EventList';
-// import AdminDashboard from './pages/AdminDashboard';
-// import OrganizerPanel from './pages/OrganizerPanel';
 
 
 
@@ -29,7 +26,6 @@ function App() {
         <Navbar />
 
         <Routes>
-          {/* <Route path="/" element={<EventList />} /> */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
@@ -82,6 +78,7 @@ function App() {
               </ProtectedRoute>
             }
           /> */}
+          
         </Routes>
 
         <Footer />
