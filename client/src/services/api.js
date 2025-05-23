@@ -40,3 +40,9 @@ export default {
   bookTicket,
   logout,
 };
+
+
+<><Route path="/bookings" element={<UserBookingsPage />} /><Route path="/bookings/:id" element={<BookingDetails />} /></> 
+
+
+

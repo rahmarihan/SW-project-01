@@ -49,3 +49,13 @@ export function AuthProvider({ children }) {
 }
 
 export const useAuth = () => useContext(AuthContext);
+import { createContext } from 'react';
+
+const AuthContext = createContext({
+  user: null,
+  login: () => {},
+  logout: () => {},
+  isLoading: false
+});
+
+export default AuthContext;
