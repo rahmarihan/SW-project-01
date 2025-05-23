@@ -12,20 +12,21 @@ function LoginForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError('');
+      setLoading(true);
 
-    const result = await login({ email, password });
-    setLoading(false);
+      const result = await login({ email, password });
+      setLoading(false);
 
-    if (result.success) {
-      navigate('/my-page');
-    } else {
-      setError(result.message || 'Failed to login');
-    }
-  };
+      if (!result.success) {
+        setError(result.message || 'Failed to login');
+      }
+
+      // No need to redirect here — it's handled inside login() in AuthContext
+    };
+
 
   return (
     <div className="login-page">
