@@ -11,12 +11,13 @@ const EventCard = ({ event }) => {
   };
 
   return (
-    <div className="event-card" onClick={handleClick} style={styles.card}>
-      <h3 style={styles.title}>{event.title}</h3>
-      <p style={styles.info}><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
-      <p style={styles.info}><strong>Location:</strong> {event.location}</p>
-      <p style={styles.info}><strong>Price:</strong> ${event.ticketPrice}</p>
-    </div>
+    <div className="event-card" onClick={handleClick}>
+    <h3>{event.title}</h3>
+    <p><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
+    <p><strong>Location:</strong> {event.location}</p>
+    <p><strong>Price:</strong> ${event.ticketPrice}</p>
+  </div>
+
   );y
 };
 

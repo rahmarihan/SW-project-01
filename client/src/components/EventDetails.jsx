@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-// Replace this with your actual AuthContext or however you track logged-in user
-import { AuthContext } from '../context/AuthContext'; 
+import { AuthContext } from '../context/AuthContext';
+import '../pages/event.css'; // Make sure this file includes the layout styles
 
 // Book ticket form component
 function BookTicketForm({ eventId, onBookingSuccess }) {
@@ -28,7 +28,7 @@ function BookTicketForm({ eventId, onBookingSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
+    <form onSubmit={handleSubmit} className="booking-form">
       <label>
         Number of Tickets:{' '}
         <input
@@ -36,31 +36,27 @@ function BookTicketForm({ eventId, onBookingSuccess }) {
           min="1"
           value={tickets}
           onChange={(e) => setTickets(parseInt(e.target.value, 10) || 1)}
-          style={{ width: '50px' }}
         />
       </label>
-      <button type="submit" disabled={loading} style={{ marginLeft: '1rem' }}>
+      <button type="submit" disabled={loading}>
         {loading ? 'Booking...' : 'Book Tickets'}
       </button>
-      {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
+      {error && <p className="error">{error}</p>}
     </form>
   );
 }
 
-// Main EventDetails component
 export default function EventDetails() {
   const { id } = useParams();
-  const { user } = useContext(AuthContext); // User info and login state
+  const { user } = useContext(AuthContext);
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch event details from backend
   const fetchEventDetails = async () => {
     try {
       const res = await axios.get(`/api/v1/events/${id}`);
-      // Assuming backend sends event data under res.data.data
-      setEvent(res.data.data || res.data); // fallback to res.data if structure differs
+      setEvent(res.data.data || res.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load event details');
     } finally {
@@ -72,7 +68,6 @@ export default function EventDetails() {
     fetchEventDetails();
   }, [id]);
 
-  // Update available tickets after successful booking
   const handleBookingSuccess = (newRemainingTickets) => {
     setEvent((prev) => ({
       ...prev,
@@ -81,40 +76,31 @@ export default function EventDetails() {
   };
 
   if (loading) return <p>Loading event details...</p>;
-  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (error) return <p className="error">{error}</p>;
   if (!event) return <p>No event found</p>;
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>{event.title}</h1>
-      <p>
-        <strong>Date:</strong> {new Date(event.date).toLocaleString()}
-      </p>
-      <p>
-        <strong>Location:</strong> {event.location}
-      </p>
-      <p>
-        <strong>Description:</strong> {event.description}
-      </p>
-      <p>
-        <strong>Ticket Price:</strong> ${event.ticketPrice || event.price}
-      </p>
-      <p>
-        <strong>Available Tickets:</strong> {event.availableTickets}
-      </p>
+    <div className="container">
+      <div className="event-details">
+        <h1>{event.title}</h1>
+        <p><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
+        <p><strong>Location:</strong> {event.location}</p>
+        <p><strong>Description:</strong> {event.description}</p>
+        <p><strong>Ticket Price:</strong> ${event.ticketPrice || event.price}</p>
+        <p><strong>Available Tickets:</strong> {event.availableTickets}</p>
 
-      {user ? (
-        user.role === 'user' ? (
-          <BookTicketForm eventId={id} onBookingSuccess={handleBookingSuccess} />
+        {user ? (
+          user.role === 'user' ? (
+            <BookTicketForm eventId={id} onBookingSuccess={handleBookingSuccess} />
+          ) : (
+            <p>Only users can book tickets.</p>
+          )
         ) : (
-          <p>Only users can book tickets.</p>
-        )
-      ) : (
-      <p>
-        Please <Link to="/login" style={{ color: 'blue' }}>log in</Link> to book tickets.
-      </p>
-      )}
-
+          <p>
+            Please <Link to="/login">log in</Link> to book tickets.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
