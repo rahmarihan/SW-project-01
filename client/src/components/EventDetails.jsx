@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import '../pages/event.css'; // Make sure this file includes the layout styles
@@ -49,6 +49,9 @@ function BookTicketForm({ eventId, onBookingSuccess }) {
 export default function EventDetails() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,9 +59,18 @@ export default function EventDetails() {
   const fetchEventDetails = async () => {
     try {
       const res = await axios.get(`/api/v1/events/${id}`);
-      setEvent(res.data.data || res.data);
+      console.log('API Response:', res.data); // Debug log
+
+      // Adapt this based on your API's actual response shape:
+      // Try res.data.data, res.data.event, or res.data itself
+      const eventData = res.data.data || res.data.event || res.data;
+
+      if (!eventData) {
+        throw new Error('No event data found');
+      }
+      setEvent(eventData);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load event details');
+      setError(err.response?.data?.message || err.message || 'Failed to load event details');
     } finally {
       setLoading(false);
     }
@@ -75,6 +87,14 @@ export default function EventDetails() {
     }));
   };
 
+  const handleBack = () => {
+    if (location.state?.from) {
+      navigate(location.state.from);
+    } else {
+      navigate(-1); // fallback to browser back
+    }
+  };
+
   if (loading) return <p>Loading event details...</p>;
   if (error) return <p className="error">{error}</p>;
   if (!event) return <p>No event found</p>;
@@ -82,12 +102,17 @@ export default function EventDetails() {
   return (
     <div className="container">
       <div className="event-details">
-        <h1>{event.title}</h1>
-        <p><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
-        <p><strong>Location:</strong> {event.location}</p>
-        <p><strong>Description:</strong> {event.description}</p>
-        <p><strong>Ticket Price:</strong> ${event.ticketPrice || event.price}</p>
-        <p><strong>Available Tickets:</strong> {event.availableTickets}</p>
+        <h1>{event.title || event.name || 'Untitled Event'}</h1>
+        <p>
+          <strong>Date:</strong>{' '}
+          {event.date ? new Date(event.date).toLocaleString() : 'N/A'}
+        </p>
+        <p><strong>Location:</strong> {event.location || 'N/A'}</p>
+        <p><strong>Description:</strong> {event.description || 'No description available'}</p>
+        <p><strong>Ticket Price:</strong> ${event.ticketPrice ?? event.price ?? 'N/A'}</p>
+        <p><strong>Available Tickets:</strong> {event.availableTickets ?? 'N/A'}</p>
+
+        <button onClick={handleBack} className="back-button">← Back</button>
 
         {user ? (
           user.role === 'user' ? (
@@ -100,6 +125,9 @@ export default function EventDetails() {
             Please <Link to="/login">log in</Link> to book tickets.
           </p>
         )}
+
+        {/* Debug: Show raw event data */}
+        {/* <pre>{JSON.stringify(event, null, 2)}</pre> */}
       </div>
     </div>
   );

@@ -13,7 +13,8 @@ function AdminPage() {
       <header className="navbar">
         <h1 className="logo">👑 Admin Dashboard</h1>
         <nav className="nav-buttons">
-          <button onClick={logout}>Logout</button>
+          <button onClick={() => navigate('/')}>Home</button> {/* Home button */}
+          {/* <button onClick={logout}>Logout</button> */}
         </nav>
       </header>
 
@@ -21,7 +22,6 @@ function AdminPage() {
         <h2>WELCOME {user.name.toUpperCase()}!</h2>
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Role:</strong> {user.role}</p>
-
       </main>
     </div>
   );

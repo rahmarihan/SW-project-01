@@ -1,5 +1,3 @@
-// src/components/events/EventList.jsx
-
 import React, { useEffect, useState } from "react";
 import EventCard from "./EventCard";
 import api from "../services/api";
@@ -85,10 +83,9 @@ const EventList = () => {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {filteredEvents.map((event, index) => {
-            const key = event.id || `${event.title}-${index}`; // fallback if id is missing
+            const key = event._id || `${event.title}-${index}`; // Use _id as key
             return <EventCard key={key} event={event} />;
-            })}
-
+          })}
         </div>
       )}
     </div>

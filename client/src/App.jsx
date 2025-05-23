@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -18,14 +18,25 @@ import EventList from './components/EventList';
 import EventDetails from './components/EventDetails';
 import MyEvents from './components/MyEvents';
 import EventForm from './components/EventForm';
-// import EventList from './pages/EventList';
-// import AdminDashboard from './pages/AdminDashboard';
-// import OrganizerPanel from './pages/OrganizerPanel';
 
 function App() {
+  const location = useLocation();
+
+  // Detect if we're on a specific event details page like /events/123
+  const isEventDetailsPage = /^\/events\/[^/]+$/.test(location.pathname);
+
+  // Only show navbar on certain routes, excluding /events/:id
+  const showNavbar =
+    location.pathname === '/' ||
+    location.pathname === '/login' ||
+    location.pathname === '/register' ||
+    location.pathname === '/forgetPassword' ||
+    location.pathname === '/unauthorized' ||
+    (location.pathname.startsWith('/events') && !isEventDetailsPage);
+
   return (
     <>
-      <Navbar />
+      {showNavbar && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -65,13 +76,12 @@ function App() {
           }
         />
 
-        {/* Organizer routes */}
+        {/* Organizer Event Routes */}
         <Route path="/my-events" element={<MyEvents />} />
         <Route path="/my-events/create" element={<EventForm />} />
         <Route path="/my-events/edit/:id" element={<EventForm />} />
       </Routes>
 
-      <Footer />
       <ToastContainer position="top-right" autoClose={3000} pauseOnHover />
     </>
   );

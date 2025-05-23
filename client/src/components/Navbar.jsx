@@ -1,48 +1,63 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext'; // adjust path if needed
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import '../pages/Navbar.css';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     toast.success('Logged out successfully');
   };
 
+  const getMyPageRoute = () => {
+    if (!user) return null;
+    switch (user.role) {
+      case 'admin':
+        return '/admin';
+      case 'organizer':
+        return '/organizer';
+      case 'user':
+      default:
+        return '/my-page';
+    }
+  };
+
   return (
-    <nav className="bg-gray-800 text-white px-6 py-3 flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold">🎟️ Eventify</Link>
+    <nav className="navbar">
+      <Link to="/" className="logo">🎟️ Eventify</Link>
 
-      <div className="space-x-4">
-        {/* Show when not logged in */}
+      <div className="nav-links">
         {!user && (
-          <>
-            <Link to="/login" className="hover:underline">Login</Link>
-            <Link to="/register" className="hover:underline">Register</Link>
-          </>
-        )}
+      <>
+        <Link to="/login" className="nav-btn">Login</Link>
+        <Link to="/register" className="nav-btn">Register</Link>
+      </>
+    )}
 
-        {/* Common links when logged in */}
         {user && (
           <>
-            <Link to="/profile" className="hover:underline">Profile</Link>
-
-            {/* Role-specific links */}
-            {user.role === 'admin' && (
-              <Link to="/admin" className="hover:underline">Admin Panel</Link>
-            )}
-            {user.role === 'organizer' && (
-              <Link to="/organizer" className="hover:underline">My Events</Link>
-            )}
-            {user.role === 'user' && (
-              <Link to="/bookings" className="hover:underline">My Bookings</Link>
-            )}
-
-            <button onClick={handleLogout} className="ml-4 bg-red-500 px-3 py-1 rounded hover:bg-red-600">
-              Logout
+            {/* Show My Page button */}
+            <button
+              onClick={() => {
+                const route = getMyPageRoute();
+                if (route) navigate(route);
+              }}
+              className="my-page-btn"
+            >
+              My Page
             </button>
+
+            {/* Commented out for now, add later if needed */}
+            {/* <Link to="/profile">Profile</Link> */}
+            {/* {user.role === 'admin' && <Link to="/admin">Admin Panel</Link>} */}
+            {/* {user.role === 'organizer' && <Link to="/organizer">My Events</Link>} */}
+            {/* {user.role === 'user' && <Link to="/bookings">My Bookings</Link>} */}
+
+            <button onClick={handleLogout} className="logout-btn">Logout</button>
           </>
         )}
       </div>
