@@ -13,26 +13,39 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   const login = async (credentials) => {
-    setLoading(true);
-    try {
-      const res = await api.login(credentials);
-      const userData = res.data.user;
-      const token = res.data.token;
+  setLoading(true);
+  try {
+    const res = await api.login(credentials);
+    const userData = res.data.user;
+    const token = res.data.token;
 
-      localStorage.setItem('user', JSON.stringify(userData));
-      localStorage.setItem('token', token);
-      setUser(userData);
-      navigate('/');
-      return { success: true };
-    } catch (err) {
-      return {
-        success: false,
-        message: err?.response?.data?.message || 'Login failed',
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', token);
+    setUser(userData);
+
+    // Redirect based on role
+  if (userData.role === 'admin') {
+    navigate('/admin');
+  } else if (userData.role === 'user') {
+    navigate('/my-page');
+  } else if (userData.role === 'organizer') {
+    navigate('/organizer');
+  } else {
+    navigate('/'); // fallback
+  }
+
+
+    return { success: true };
+  } catch (err) {
+    return {
+      success: false,
+      message: err?.response?.data?.message || 'Login failed',
+    };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const logout = () => {
     localStorage.removeItem('user');
@@ -49,3 +62,4 @@ export function AuthProvider({ children }) {
 }
 
 export const useAuth = () => useContext(AuthContext);
+
