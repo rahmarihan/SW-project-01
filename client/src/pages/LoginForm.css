@@ -102,3 +102,18 @@
 .login-form button:hover:not(:disabled) {
   background-color: #111;
 }
+.back-to-home {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.back-to-home a {
+  color: white;
+  font-size: 0.95rem;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.back-to-home a:hover {
+  color: #dcdcdc;
+}

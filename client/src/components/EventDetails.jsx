@@ -104,10 +104,17 @@ export default function EventDetails() {
       </p>
 
       {user ? (
-        <BookTicketForm eventId={id} onBookingSuccess={handleBookingSuccess} />
+        user.role === 'user' ? (
+          <BookTicketForm eventId={id} onBookingSuccess={handleBookingSuccess} />
+        ) : (
+          <p>Only users can book tickets.</p>
+        )
       ) : (
-        <p>Please log in to book tickets.</p>
+      <p>
+        Please <Link to="/login" style={{ color: 'blue' }}>log in</Link> to book tickets.
+      </p>
       )}
+
     </div>
   );
 }

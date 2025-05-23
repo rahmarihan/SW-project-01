@@ -15,9 +15,10 @@ const EventList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const data = await api.getApprovedEvents(); // ✅ direct usage
-        setEvents(data);
-        setFilteredEvents(data);
+        const response = await api.getApprovedEvents();
+        const eventsArray = response.data || response;
+        setEvents(eventsArray);
+        setFilteredEvents(eventsArray);
       } catch (error) {
         toast.error("Failed to load events.");
       }
@@ -83,9 +84,11 @@ const EventList = () => {
         <p className="text-gray-600">No events found.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {filteredEvents.map((event) => (
-            <EventCard key={event._id} event={event} />
-          ))}
+          {filteredEvents.map((event, index) => {
+            const key = event.id || `${event.title}-${index}`; // fallback if id is missing
+            return <EventCard key={key} event={event} />;
+            })}
+
         </div>
       )}
     </div>

@@ -82,6 +82,10 @@ function RegisterForm() {
         <button type="submit" disabled={loading}>
           {loading ? 'Registering...' : 'Register'}
         </button>
+        <div className="back-to-home">
+        <a href="/">← Back to Home</a>
+      </div>
+
       </form>
     </div>
   );

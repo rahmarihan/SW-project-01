@@ -17,7 +17,7 @@ const EventCard = ({ event }) => {
       <p style={styles.info}><strong>Location:</strong> {event.location}</p>
       <p style={styles.info}><strong>Price:</strong> ${event.ticketPrice}</p>
     </div>
-  );
+  );y
 };
 
 const styles = {

@@ -1,7 +1,10 @@
+// src/pages/Home.jsx
 import React from "react";
 import { Link } from "react-router-dom";
-import Footer from './Footer'; 
+import Footer from './Footer';
+import EventList from "../components/EventList"; // 👈 Import EventList
 import '../pages/Home.css';
+
 export default function Home() {
   return (
     <div className="home-page">
@@ -13,7 +16,6 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* Full screen centered container */}
       <div className="home-container">
         <div className="home-main-content">
           <h1>Welcome to Eventify!</h1>
@@ -23,6 +25,11 @@ export default function Home() {
           </p>
         </div>
       </div>
+
+      {/* Add EventList here */}
+      <EventList />
+
+      <Footer />
     </div>
   );
 }

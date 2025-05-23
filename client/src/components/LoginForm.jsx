@@ -11,6 +11,8 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const handleBack = () => navigate('/');
+
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -68,6 +70,10 @@ function LoginForm() {
           <button type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
+          <div className="back-to-home">
+          <a href="/">← Back to Home</a>
+        </div>
+
         </form>
       </div>
     </div>
