@@ -3,9 +3,9 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #fafafa; /* Light background for entire page */
+  background-color: #6b78ef; /* Light background for entire page */
   font-family: Arial, sans-serif;
-  color: #222;
+  color: #4c5dde;
 }
 
 /* Full page wrapper fills full viewport height */
@@ -21,7 +21,7 @@ html, body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #4a90e2;
+  background-color: #6b78ef;
   color: white;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   position: sticky;
@@ -38,7 +38,7 @@ html, body {
 /* Buttons on the right */
 .nav-buttons button {
   margin-left: 1rem;
-  background-color: #357ABD;
+  background-color: #2e41d5;
   border: none;
   color: white;
   padding: 0.5rem 1rem;
@@ -55,8 +55,7 @@ html, body {
 /* Main content area */
 .content {
   flex: 1; /* take remaining space */
-  max-width: 800px;
-  margin: 2rem auto; /* center horizontally */
+
   padding: 1rem 2rem;
   background: white;
   border-radius: 8px;
@@ -70,4 +69,10 @@ html, body {
 .content p {
   font-size: 1.1rem;
   margin: 0.5rem 0;
+}
+.page-wrapper {
+  min-height: 100vh;
+  min-width: 100vw; /* explicitly full width */
+  display: flex;
+  flex-direction: column;
 }
