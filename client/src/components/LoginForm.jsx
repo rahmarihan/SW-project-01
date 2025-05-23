@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import '../pages/LoginForm.css'; // Make sure this file includes the layout styles
 
 function LoginForm() {
   const { login } = useAuth();
@@ -20,53 +21,55 @@ function LoginForm() {
     setLoading(false);
 
     if (result.success) {
-      navigate('/'); // redirect to home or dashboard
+      navigate('/my-page');
     } else {
       setError(result.message || 'Failed to login');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
+    <div className="login-page">
+      <div className="login-container">
+        <form onSubmit={handleSubmit} className="login-form">
+          <h2>Login</h2>
 
-      {error && (
-        <div style={{ color: 'red', marginBottom: '10px' }}>
-          {error}
-          {error.toLowerCase().includes('invalid credentials') && (
-            <div style={{ marginTop: '5px' }}>
-              <a href="/forgetPassword" style={{ color: 'blue', textDecoration: 'underline' }}>
-                Forgot your password?
-              </a>
+          {error && (
+            <div className="login-error">
+              {error}
+              {error.toLowerCase().includes('invalid credentials') && (
+                <div className="forgot-password">
+                  <a href="/forgetPassword">Forgot your password?</a>
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
 
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
+          <div className="form-group">
+            <label>Email:</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button type="submit" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
       </div>
-
-      <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-        />
-      </div>
-
-      <button type="submit" disabled={loading}>
-        {loading ? 'Logging in...' : 'Login'}
-      </button>
-    </form>
+    </div>
   );
 }
 

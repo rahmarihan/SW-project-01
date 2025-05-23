@@ -1,0 +1,78 @@
+/* Make sure html and body fill full viewport */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #6b78ef; /* Light background for entire page */
+  font-family: Arial, sans-serif;
+  color: #4c5dde;
+}
+
+/* Full page wrapper fills full viewport height */
+.page-wrapper {
+  min-height: 100vh; /* Full viewport height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar at the top, full width */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #6b78ef;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Site logo or title */
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+/* Buttons on the right */
+.nav-buttons button {
+  margin-left: 1rem;
+  background-color: #2e41d5;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.nav-buttons button:hover {
+  background-color: #2a5f9e;
+}
+
+/* Main content area */
+.content {
+  flex: 1; /* take remaining space */
+
+  padding: 1rem 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.content h2 {
+  margin-bottom: 1rem;
+}
+
+.content p {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+.page-wrapper {
+  min-height: 100vh;
+  min-width: 100vw; /* explicitly full width */
+  display: flex;
+  flex-direction: column;
+}

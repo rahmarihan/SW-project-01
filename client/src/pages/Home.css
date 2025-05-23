@@ -1,0 +1,83 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.home-page {
+  min-height: 100vh;      /* full viewport height */
+  height: 100vh;          /* force exact height */
+  width: 100vw;           /* full viewport width */
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to right, #f9f9f9, #f0f0f0);
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Header styles */
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Navigation links */
+.home-nav a {
+  margin-left: 1rem;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  background-color: #6b78ef;
+  color: white;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.home-nav a:hover {
+  background-color: #6b78ef;
+}
+
+/* New: Full page container between header and footer */
+.home-container {
+  flex: 1;                      /* fill remaining space */
+  display: flex;
+  justify-content: center;      /* horizontal center */
+  align-items: center;          /* vertical center */
+  width: 100%;                  /* full width */
+  box-sizing: border-box;
+  padding: 2rem;
+}
+
+.home-main-content {
+  max-width: 600px;
+  background-color: #6b78ef;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+
+.home-main-content h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.home-main-content p {
+  font-size: 1.2rem;
+  color: #555;
+}

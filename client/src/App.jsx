@@ -2,10 +2,11 @@ import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Home from './pages/Home';
+import Home from './components/Home';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import MyPage from './components/MyPage';
 
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
@@ -25,7 +26,6 @@ function App() {
         <Navbar />
         
         <Routes>
-          {/* <Route path="/" element={<EventList />} /> */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
