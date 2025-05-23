@@ -1,7 +1,7 @@
 // src/components/EventForm.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../api/api";
+import api from "../services/api";
 import { toast } from "react-toastify";
 
 const EventForm = () => {

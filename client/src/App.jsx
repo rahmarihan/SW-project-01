@@ -13,7 +13,7 @@ import OrganizerPage from './components/OrganizerPage';
 
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
-import ForgotPassword from './components/ForgotPassword';
+import ForgotPassword from './components/ForgetPassword';
 import EventList from './components/EventList';
 import EventDetails from './components/EventDetails';
 import MyEvents from './components/MyEvents';
