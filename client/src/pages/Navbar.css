@@ -7,6 +7,7 @@
   justify-content: space-between;
   align-items: center;
   font-family: Arial, sans-serif;
+  position: relative;
 }
 
 /* Logo/brand */
@@ -15,6 +16,17 @@
   font-weight: 700;   /* font-bold */
   text-decoration: none;
   color: white;
+}
+
+/* Center label in navbar */
+.navbar .navbar-center-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #a6b1fa;
+  pointer-events: none;
 }
 
 /* Right side links container */
@@ -66,6 +78,11 @@
 .navbar .nav-btn:hover {
   background-color: #00000081; /* Tailwind's green-600 */
 }
+
+.navbar .nav-btn.active {
+  background-color: #2e41d5;
+  color: #fff;
+}
 /* My Page button style */
 .navbar .my-page-btn {
   background-color: #fcfeff; /* Tailwind's blue-500 */
@@ -80,4 +97,11 @@
 
 .navbar .my-page-btn:hover {
   background-color: #2b6cb0; /* Tailwind's blue-700 */
+}
+
+/* Home label style */
+.home-label {
+  margin-left: 1rem;
+  font-weight: bold;
+  color: #a6b1fa;
 }

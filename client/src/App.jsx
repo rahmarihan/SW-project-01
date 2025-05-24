@@ -36,8 +36,7 @@ function App() {
 
   return (
     <>
-      {showNavbar && <Navbar />}
-
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginForm />} />
@@ -45,7 +44,7 @@ function App() {
         <Route path="/forgetPassword" element={<ForgotPassword />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/events/:id" element={<EventDetails />} />
-       <Route path="/events" element={<EventList />} />
+        <Route path="/events" element={<EventList />} />
 
         {/* User Role Route */}
         <Route
@@ -82,6 +81,7 @@ function App() {
         <Route path="/my-events/create" element={<EventForm />} />
         <Route path="/my-events/edit/:id" element={<EventForm />} />
       </Routes>
+      <Footer />
 
       <ToastContainer position="top-right" autoClose={3000} pauseOnHover />
     </>
