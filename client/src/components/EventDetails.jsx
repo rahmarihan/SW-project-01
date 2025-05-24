@@ -64,34 +64,58 @@ export default function EventDetails() {
   if (!event) return <p>No event found</p>;
 
   return (
-    <div className="container">
-      <div className="event-details">
-        <h1>{event.title || event.name || 'Untitled Event'}</h1>
-        <p>
-          <strong>Date:</strong>{' '}
-          {event.date ? new Date(event.date).toLocaleString() : 'N/A'}
-        </p>
-        <p><strong>Location:</strong> {event.location || 'N/A'}</p>
-        <p><strong>Description:</strong> {event.description || 'No description available'}</p>
-        <p><strong>Ticket Price:</strong> ${event.ticketPrice ?? event.price ?? 'N/A'}</p>
-        <p><strong>Available Tickets:</strong> {event.availableTickets ?? 'N/A'}</p>
+    <div className="page-wrapper">
+      <div className="event-details-wrapper">
+        <div className="event-details">
+          <h1 className="event-title">{event.title || event.name || 'Untitled Event'}</h1>
+          <div className="event-info-grid">
+            <div className="event-info-row">
+              <span className="event-info-label">Date:</span>
+              <span className="event-info-value">
+                {event.date ? new Date(event.date).toLocaleString() : 'N/A'}
+              </span>
+            </div>
+            <div className="event-info-row">
+              <span className="event-info-label">Location:</span>
+              <span className="event-info-value">{event.location || 'N/A'}</span>
+            </div>
+            <div className="event-info-row">
+              <span className="event-info-label">Description:</span>
+              <span className="event-info-value">{event.description || 'No description available'}</span>
+            </div>
+            <div className="event-info-row">
+              <span className="event-info-label">Ticket Price:</span>
+              <span className="event-info-value">${event.ticketPrice ?? event.price ?? 'N/A'}</span>
+            </div>
+            <div className="event-info-row">
+              <span className="event-info-label">Available Tickets:</span>
+              <span className="event-info-value">{event.availableTickets ?? 'N/A'}</span>
+            </div>
+          </div>
 
-        <button onClick={handleBack} className="back-button">← Back</button>
-
-        {user ? (
-          user.role === 'user' ? (
-            <BookTicketForm eventId={id} onBookingSuccess={handleBookingSuccess} />
-          ) : (
-            <p>Only users can book tickets.</p>
-          )
-        ) : (
-          <p>
-            Please <Link to="/login">log in</Link> to book tickets.
-          </p>
-        )}
-
-        {/* Debug: Show raw event data */}
-        {/* <pre>{JSON.stringify(event, null, 2)}</pre> */}
+          {/* Booking section */}
+          <div className="event-actions-row">
+            {user ? (
+              user.role === 'user' ? (
+                <BookTicketForm
+                  eventId={id}
+                  availableTickets={event.availableTickets}
+                  onBookingSuccess={handleBookingSuccess}
+                />
+              ) : (
+                <p className="only-user-msg">Only users can book tickets.</p>
+              )
+            ) : (
+              <div className="login-alert">
+                <span>🔒</span>
+                <span>
+                  Please <Link to="/login">log in</Link> to book tickets.
+                </span>
+              </div>
+            )}
+            <button onClick={handleBack} className="back-button">← Back</button>
+          </div>
+        </div>
       </div>
     </div>
   );

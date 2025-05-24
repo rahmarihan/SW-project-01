@@ -40,8 +40,7 @@ function App() {
 
   return (
     <>
-      {showNavbar && <Navbar />}
-
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginForm />} />
@@ -89,6 +88,7 @@ function App() {
         {/* Update Profile */}
         <Route path="/update-profile" element={<UpdateProfile />} />
       </Routes>
+      <Footer />
 
       <ToastContainer position="top-right" autoClose={3000} pauseOnHover />
       {/* Optionally add <Footer /> here */}
