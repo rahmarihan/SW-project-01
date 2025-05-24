@@ -1,32 +1,36 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import '../pages/LoginForm.css'; // Make sure this file includes the layout styles
 
 function LoginForm() {
   const { login } = useAuth();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setError('');
-      setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-      const result = await login({ email, password });
-      setLoading(false);
+    const result = await login({ email, password });
+    setLoading(false);
 
-      if (!result.success) {
-        setError(result.message || 'Failed to login');
-      }
+    if (result.success && result.token) {
+      // Save token to localStorage
+      localStorage.setItem('token', result.token);
+    }
 
-      // No need to redirect here — it's handled inside login() in AuthContext
-    };
+    if (!result.success) {
+      setError(result.message || 'Failed to login');
+    }
 
+    // No need to redirect here — it's handled inside login() in AuthContext
+  };
 
   return (
     <div className="login-page">

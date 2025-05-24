@@ -14,11 +14,14 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './pages/ProfilePage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminEventsPage from './pages/AdminEventsPage'; // ✅ NEW
+import LoginForm from './components/LoginForm';
 import MyPage from './components/MyPage';
 import AdminPage from './components/AdminPage';
 import OrganizerPage from './components/OrganizerPage';
+import UpdateProfile from './components/UpdateProfileForm';
 
-import LoginForm from './components/LoginForm';
+
+//import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import ForgotPassword from './components/ForgetPassword';
 
@@ -41,6 +44,9 @@ function App() {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgetPassword" element={<ForgotPassword />} />
           <Route path="/my-page" element={<MyPage />} />
+          <Route path="/organizerpage" element={<OrganizerPage />} />
+          <Route path="/adminpage" element={<AdminPage />} />
+          <Route path="/update-profile" element={<UpdateProfile />} />
           
         </Routes>
 

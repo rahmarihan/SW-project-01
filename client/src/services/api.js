@@ -47,6 +47,9 @@ const deleteEvent = async (id) => {
   await api.delete(`/events/${id}`);
 };
 
+// ✅ Profile API
+export const updateProfile = (data) => api.put('/users/profile', data);
+
 // Export all functions in a single object
 export default {
   login,
@@ -58,4 +61,5 @@ export default {
   getApprovedEvents,
   getMyEvents,
   deleteEvent,
+  updateProfile, // ✅ Added here
 };

@@ -12,7 +12,7 @@ const MyEvents = () => {
       try {
         const response = await api.get("/events/my"); // Adjust API endpoint as needed
         setEvents(response.data);
-      } catch (error) {
+      } catch {
         toast.error("Failed to load your events");
       }
     };
@@ -27,7 +27,7 @@ const MyEvents = () => {
       await api.delete(`/events/${id}`);
       setEvents(events.filter((event) => event._id !== id));
       toast.success("Event deleted");
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete event");
     }
   };
