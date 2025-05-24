@@ -1,23 +1,22 @@
-// src/components/events/EventList.jsx
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import EventCard from "./EventCard";
 import api from "../services/api";
 import { toast } from "react-toastify";
+import { Link, useLocation } from "react-router-dom";
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
   const [search, setSearch] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const location = useLocation();
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const data = await api.getApprovedEvents(); // ✅ direct usage
-        setEvents(data);
-        setFilteredEvents(data);
+        const response = await api.getApprovedEvents();
+        const eventsArray = response.data || response;
+        setEvents(eventsArray);
       } catch (error) {
         toast.error("Failed to load events.");
       }
@@ -26,7 +25,7 @@ const EventList = () => {
     fetchEvents();
   }, []);
 
-  useEffect(() => {
+  const filteredEvents = useMemo(() => {
     let filtered = [...events];
 
     if (search.trim()) {
@@ -47,7 +46,7 @@ const EventList = () => {
       );
     }
 
-    setFilteredEvents(filtered);
+    return filtered;
   }, [search, locationFilter, dateFilter, events]);
 
   return (
@@ -83,9 +82,20 @@ const EventList = () => {
         <p className="text-gray-600">No events found.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {filteredEvents.map((event) => (
-            <EventCard key={event._id} event={event} />
-          ))}
+          {filteredEvents.map((event, index) => {
+            console.log('Event in map:', event);
+            const key = event.id || `${event.title}-${index}`;
+            return (
+              <Link
+                key={key}
+                to={`/events/${event.id}`}
+                state={{ from: location.pathname }}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <EventCard event={event} />
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

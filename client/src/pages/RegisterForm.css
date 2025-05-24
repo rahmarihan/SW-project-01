@@ -14,7 +14,7 @@
 
 /* Centered form container */
 .register-form {
-  max-width: 600px;
+  max-width: 400px;
   width: 100%;
   background-color: #6b78ef;
   padding: 2rem;
@@ -78,4 +78,19 @@
 
 .register-form button:hover {
   background-color: #e0e0e0;
+}
+.back-to-home {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.back-to-home a {
+  color: white;
+  font-size: 0.95rem;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.back-to-home a:hover {
+  color: #dcdcdc;
 }

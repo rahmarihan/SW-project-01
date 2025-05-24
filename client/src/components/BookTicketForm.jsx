@@ -1,6 +1,7 @@
 // src/components/BookTicketForm.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import EventDetails from "./EventDetails";
 
 const BookTicketForm = ({ eventId, availableTickets }) => {
   const [ticketsToBook, setTicketsToBook] = useState(1);
@@ -60,3 +61,5 @@ const BookTicketForm = ({ eventId, availableTickets }) => {
 };
 
 export default BookTicketForm;
+
+
