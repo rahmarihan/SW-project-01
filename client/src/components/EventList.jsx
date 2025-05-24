@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import EventCard from "./EventCard";
 import api from "../services/api";
 import { toast } from "react-toastify";
+import { Link, useLocation } from "react-router-dom";
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
   const [search, setSearch] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const location = useLocation();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -16,7 +17,6 @@ const EventList = () => {
         const response = await api.getApprovedEvents();
         const eventsArray = response.data || response;
         setEvents(eventsArray);
-        setFilteredEvents(eventsArray);
       } catch (error) {
         toast.error("Failed to load events.");
       }
@@ -25,7 +25,7 @@ const EventList = () => {
     fetchEvents();
   }, []);
 
-  useEffect(() => {
+  const filteredEvents = useMemo(() => {
     let filtered = [...events];
 
     if (search.trim()) {
@@ -46,7 +46,7 @@ const EventList = () => {
       );
     }
 
-    setFilteredEvents(filtered);
+    return filtered;
   }, [search, locationFilter, dateFilter, events]);
 
   return (
@@ -83,8 +83,18 @@ const EventList = () => {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {filteredEvents.map((event, index) => {
-            const key = event._id || `${event.title}-${index}`; // Use _id as key
-            return <EventCard key={key} event={event} />;
+            console.log('Event in map:', event);
+            const key = event.id || `${event.title}-${index}`;
+            return (
+              <Link
+                key={key}
+                to={`/events/${event.id}`}
+                state={{ from: location.pathname }}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <EventCard event={event} />
+              </Link>
+            );
           })}
         </div>
       )}

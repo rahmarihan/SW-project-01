@@ -25,6 +25,9 @@ const logout = () => api.post('/auth/logout'); // Optional: only if backend supp
 
 // Event APIs
 const getEvents = () => api.get('/events');
+
+const getEventDetails = (id) => api.get(`/events/${id}`);
+
 const bookTicket = (eventId) => api.post(`/events/${eventId}/book`);
 
 // Organizer APIs
@@ -54,6 +57,7 @@ export default {
   forgotPassword,
   logout,
   getEvents,
+  getEventDetails,   // ✅ Newly added function
   bookTicket,
   getApprovedEvents,
   getMyEvents,

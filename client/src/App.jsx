@@ -45,6 +45,7 @@ function App() {
         <Route path="/forgetPassword" element={<ForgotPassword />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/events/:id" element={<EventDetails />} />
+       <Route path="/events" element={<EventList />} />
 
         {/* User Role Route */}
         <Route

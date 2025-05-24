@@ -3,51 +3,14 @@ import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import '../pages/event.css'; // Make sure this file includes the layout styles
-
-// Book ticket form component
-function BookTicketForm({ eventId, onBookingSuccess }) {
-  const [tickets, setTickets] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.post(`/api/v1/events/${eventId}/book`, {
-        ticketsToBook: tickets,
-      });
-      alert(res.data.message);
-      onBookingSuccess(res.data.remainingTickets);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Booking failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="booking-form">
-      <label>
-        Number of Tickets:{' '}
-        <input
-          type="number"
-          min="1"
-          value={tickets}
-          onChange={(e) => setTickets(parseInt(e.target.value, 10) || 1)}
-        />
-      </label>
-      <button type="submit" disabled={loading}>
-        {loading ? 'Booking...' : 'Book Tickets'}
-      </button>
-      {error && <p className="error">{error}</p>}
-    </form>
-  );
-}
+import api from '../services/api';
+import BookTicketForm from "./BookTicketForm";
 
 export default function EventDetails() {
   const { id } = useParams();
+  console.log("Event ID from URL params:", id);
+  console.log('Params:', useParams()); // Debugging line
+
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -58,12 +21,13 @@ export default function EventDetails() {
 
   const fetchEventDetails = async () => {
     try {
-      const res = await axios.get(`/api/v1/events/${id}`);
+      const res = await api.getEventDetails(id);
       console.log('API Response:', res.data); // Debug log
 
       // Adapt this based on your API's actual response shape:
       // Try res.data.data, res.data.event, or res.data itself
       const eventData = res.data.data || res.data.event || res.data;
+      console.log("FULL EVENT RESPONSE:", res.data);
 
       if (!eventData) {
         throw new Error('No event data found');

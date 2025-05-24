@@ -4,6 +4,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom'; // added Link
 import api from '../services/api';
 import { toast } from 'react-toastify';
 import EventCard from '../components/EventCard'; // ✅ Use EventCard
+import EventList from '../components/EventList'; // <-- Add this import
 import '../pages/MyPage.css';
 
 function MyPage() {
@@ -53,23 +54,7 @@ function MyPage() {
         {showEvents && (
           <div style={{ marginTop: '2rem' }}>
             <h3>All Events</h3>
-            {events.length === 0 ? (
-              <p>No events available.</p>
-            ) : (
-              <div className="event-list">
-               {events.map((event, index) => (
-                <Link
-                  key={event._id || `${event.title}-${index}`}
-                  to={`/events/${event._id}`}
-                  state={{ from: location.pathname }}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <EventCard event={event} />
-                </Link>
-              ))}
-
-              </div>
-            )}
+            <EventList />
           </div>
         )}
       </main>
