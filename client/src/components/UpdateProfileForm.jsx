@@ -32,7 +32,22 @@ const UpdateProfileForm = () => {
 
     setLoading(true);
     try {
-      const res = await api.updateProfile(formData);
+      // Only send role if admin
+      const dataToSend = {
+        name: formData.name,
+        email: formData.email,
+      };
+      if (formData.password) dataToSend.password = formData.password;
+      if (user?.role === 'admin') {
+        dataToSend.role = formData.role;
+      }
+
+      // Double-check: remove role if not admin
+      if (user?.role !== 'admin' && 'role' in dataToSend) {
+        delete dataToSend.role;
+      }
+
+      const res = await api.updateProfile(dataToSend);
       setUser(res.data.user);
       setSuccess('Profile updated successfully');
     } catch (error) {
@@ -79,14 +94,16 @@ const UpdateProfileForm = () => {
         placeholder="New Password"
       />
 
+      {/* Always show the role dropdown, but only enable for admin */}
       <label htmlFor="role" style={{ marginTop: 10 }}>Role</label>
       <select
         id="role"
         name="role"
         value={formData.role}
         onChange={handleChange}
-        required
-        disabled={user?.role !== 'admin'}  // Disable role select for non-admin users
+        disabled={user?.role !== 'admin'}
+        // Only required for admin
+        required={user?.role === 'admin'}
       >
         <option value="">Select Role</option>
         <option value="user">User</option>
