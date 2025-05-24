@@ -37,11 +37,9 @@ function MyPage() {
       <header className="navbar">
         <h1 className="logo">😊 My Profile</h1>
         <nav className="nav-buttons">
-          <button onClick={() => navigate('/')}>Home</button>
-          <button onClick={() => setShowEvents(!showEvents)}>
-            {showEvents ? 'Hide Events' : 'View Events'}
-          </button>
-          <button onClick={() => navigate('/update-profile')}>Update Profile</button>
+           <button onClick={() => navigate('/update-profile')}>
+      Edit Profile
+           </button>
           <button onClick={logout}>Logout</button>
         </nav>
       </header>
