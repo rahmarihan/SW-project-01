@@ -28,7 +28,8 @@ const getEvents = () => api.get('/events');
 
 const getEventDetails = (id) => api.get(`/events/${id}`);
 
-const bookTicket = (eventId) => api.post(`/events/${eventId}/book`);
+const bookTicket = (eventId, numOfTickets) =>
+  api.post('/bookings', { eventId, numOfTickets });
 
 // Organizer APIs
 const getApprovedEvents = async (searchTerm = "", filter = {}) => {
