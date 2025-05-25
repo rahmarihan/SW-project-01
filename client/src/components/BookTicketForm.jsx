@@ -19,18 +19,15 @@ const BookTicketForm = ({ eventId, availableTickets, onBookingSuccess }) => {
     setMessage('');
 
     try {
-      // Use your custom API instance to include auth headers
-      const response = await api.post(`/events/${eventId}/book`, {
-        tickets: ticketsToBook,
-      });
+      // Use the correct endpoint and payload for booking
+      const response = await api.bookTicket(eventId, ticketsToBook);
 
       setMessage('Booking successful!');
-      // Update available tickets in parent
       if (onBookingSuccess) {
         // If backend returns new availableTickets, use it; otherwise, subtract locally
         const newAvailable =
-          response.data?.availableTickets !== undefined
-            ? response.data.availableTickets
+          response.data?.booking?.event?.remainingTickets !== undefined
+            ? response.data.booking.event.remainingTickets
             : availableTickets - ticketsToBook;
         onBookingSuccess(newAvailable);
       }
