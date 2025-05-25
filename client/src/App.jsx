@@ -7,7 +7,6 @@ import Home from './components/Home';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
-
 import ProfilePage from './pages/ProfilePage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminEventsPage from './pages/AdminEventsPage';
@@ -22,6 +21,8 @@ import EventList from './components/EventList';
 import EventDetails from './components/EventDetails';
 import MyEvents from './components/MyEvents';
 import EventForm from './components/EventForm';
+import BookingDetails from './components/BookingDetails'; // <-- Added import
+import UserBookingsPage from './components/UserBookingsPage';
 
 function App() {
   const location = useLocation();
@@ -38,9 +39,13 @@ function App() {
     location.pathname === '/unauthorized' ||
     (location.pathname.startsWith('/events') && !isEventDetailsPage);
 
+  const hideNavbarRoutes = ['/my-bookings', '/my-page'];
+
+  const shouldHideNavbar = hideNavbarRoutes.some(route => location.pathname.startsWith(route));
+
   return (
-    <>
-      <Navbar />
+    <div className="app-layout">
+      {!shouldHideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginForm />} />
@@ -49,6 +54,9 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventList />} />
+
+        {/* Booking Details Route */}
+        <Route path="/bookings/:id" element={<BookingDetails />} />
 
         {/* User Role Route */}
         <Route
@@ -87,12 +95,14 @@ function App() {
 
         {/* Update Profile */}
         <Route path="/update-profile" element={<UpdateProfile />} />
+
+        {/* User Bookings Route */}
+        <Route path="/my-bookings" element={<UserBookingsPage />} />
       </Routes>
       <Footer />
-
       <ToastContainer position="top-right" autoClose={3000} pauseOnHover />
       {/* Optionally add <Footer /> here */}
-    </>
+    </div>
   );
 }
 

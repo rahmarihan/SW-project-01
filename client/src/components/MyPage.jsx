@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom'; // merged useLocation
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import { toast } from 'react-toastify';
 import EventList from '../components/EventList';
@@ -9,7 +9,7 @@ import '../pages/MyPage.css';
 function MyPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // merged useLocation
+  const location = useLocation();
 
   const [showProfile, setShowProfile] = useState(false);
   const [showEvents, setShowEvents] = useState(false);
@@ -45,14 +45,13 @@ function MyPage() {
           <button onClick={() => setShowProfile((prev) => !prev)}>
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
+          <button onClick={() => navigate('/my-bookings')}>My Bookings</button> {/* <-- Add this */}
           <button onClick={logout}>Logout</button>
         </nav>
       </header>
 
       <main className="content">
-        <h2>WELCOME {user.name.toUpperCase()}!</h2>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Role:</strong> {user.role}</p>
+        <h2 className="welcome-message">Welcome, {user.name}! 🎉</h2>
 
         {showProfile && (
           <div style={{ marginTop: '2rem', border: '1px solid #ccc', padding: '1rem', borderRadius: 8 }}>

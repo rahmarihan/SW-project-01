@@ -21,13 +21,14 @@ const BookTicketForm = ({ eventId, availableTickets, onBookingSuccess, ticketPri
     setLoading(true);
 
     try {
-      const response = await api.bookTicket(eventId, ticketsToBook);
+      // Use the correct booking API:
+      const response = await api.bookTickets(eventId, ticketsToBook);
 
       toast.success('Booking successful!');
       if (onBookingSuccess) {
         const newAvailable =
-          response.data?.booking?.event?.remainingTickets !== undefined
-            ? response.data.booking.event.remainingTickets
+          response?.booking?.event?.remainingTickets !== undefined
+            ? response.booking.event.remainingTickets
             : availableTickets - ticketsToBook;
         onBookingSuccess(newAvailable);
       }
