@@ -100,6 +100,7 @@ export default function EventDetails() {
                 <BookTicketForm
                   eventId={id}
                   availableTickets={event.availableTickets}
+                  ticketPrice={event.ticketPrice ?? event.price ?? 0}
                   onBookingSuccess={handleBookingSuccess}
                 />
               ) : (
@@ -113,7 +114,15 @@ export default function EventDetails() {
                 </span>
               </div>
             )}
-            <button onClick={handleBack} className="back-button">← Back</button>
+            <button
+              type="button"
+              className="back-button"
+              onClick={handleBack}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5em' }}
+            >
+              <span style={{ fontSize: '1.2em' }}>←</span>
+              <span>Back</span>
+            </button>
           </div>
         </div>
       </div>
