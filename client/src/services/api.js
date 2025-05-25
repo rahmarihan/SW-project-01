@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create Axios instance with base URL
 const api = axios.create({
-  baseURL: "http://localhost:5000/api/v1", // 🔁 Replace with your actual backend URL if needed
+  baseURL: "http://localhost:5000/api/v1", // ✅ Replace with your actual backend URL
 });
 
 // Attach token from localStorage to every request
@@ -25,11 +25,8 @@ const logout = () => api.post('/auth/logout'); // Optional: only if backend supp
 
 // Event APIs
 const getEvents = () => api.get('/events');
-
 const getEventDetails = (id) => api.get(`/events/${id}`);
-
-const bookTicket = (eventId, numOfTickets) =>
-  api.post('/bookings', { eventId, numOfTickets });
+const bookTicket = (eventId) => api.post(`/events/${eventId}/book`);
 
 // Organizer APIs
 const getApprovedEvents = async (searchTerm = "", filter = {}) => {
@@ -51,6 +48,19 @@ const deleteEvent = async (id) => {
   await api.delete(`/events/${id}`);
 };
 
+// Booking APIs
+const bookTickets = (eventId, numberOfTickets) =>
+  api.post('/bookings', { eventId, numOfTickets: numberOfTickets }).then(res => res.data);
+
+const getUserBookings = () =>
+  api.get('/bookings/user-bookings').then(res => res.data.data);
+
+const getBookingDetails = (bookingId) =>
+  api.get(`/bookings/${bookingId}`).then(res => res.data);
+
+const cancelBooking = (bookingId) =>
+  api.delete(`/bookings/${bookingId}`).then(res => res.data);
+
 // ✅ Profile API
 export const updateProfile = (data) => api.put('/users/profile', data);
 
@@ -67,12 +77,16 @@ export default {
   forgotPassword,
   logout,
   getEvents,
-  getEventDetails,   // ✅ Newly added function
+  getEventDetails,
   bookTicket,
   getApprovedEvents,
   getMyEvents,
   deleteEvent,
-  updateProfile, // ✅ Added here
+  updateProfile,
+  bookTickets,
+  getUserBookings,
+  getBookingDetails,
+  cancelBooking,
   getAllEvents,
   getAllUsers,
   updateUserRole,

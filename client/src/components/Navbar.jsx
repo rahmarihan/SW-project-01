@@ -45,6 +45,9 @@ const Navbar = () => {
             >
               My Page
             </button>
+            <Link to="/my-bookings">
+              <button>My Bookings</button>
+            </Link>
             <button onClick={handleLogout} className="logout-btn">Logout</button>
           </>
         )}
