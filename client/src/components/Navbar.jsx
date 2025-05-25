@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import '../pages/Navbar.css';
@@ -7,6 +7,7 @@ import '../pages/Navbar.css';
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -29,18 +30,12 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <Link to="/" className="logo">🎟️ Eventify</Link>
-
+      {location.pathname === '/' && (
+        <span className="home-label navbar-center-label">Home Page</span>
+      )}
       <div className="nav-links">
-        {!user && (
-      <>
-        <Link to="/login" className="nav-btn">Login</Link>
-        <Link to="/register" className="nav-btn">Register</Link>
-      </>
-    )}
-
         {user && (
           <>
-            {/* Show My Page button */}
             <button
               onClick={() => {
                 const route = getMyPageRoute();
@@ -50,14 +45,13 @@ const Navbar = () => {
             >
               My Page
             </button>
-
-            {/* Commented out for now, add later if needed */}
-            {/* <Link to="/profile">Profile</Link> */}
-            {/* {user.role === 'admin' && <Link to="/admin">Admin Panel</Link>} */}
-            {/* {user.role === 'organizer' && <Link to="/organizer">My Events</Link>} */}
-            {/* {user.role === 'user' && <Link to="/bookings">My Bookings</Link>} */}
-
             <button onClick={handleLogout} className="logout-btn">Logout</button>
+          </>
+        )}
+        {!user && (
+          <>
+            <Link to="/login" className="nav-btn">Login</Link>
+            <Link to="/register" className="nav-btn">Register</Link>
           </>
         )}
       </div>

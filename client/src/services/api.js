@@ -25,7 +25,11 @@ const logout = () => api.post('/auth/logout'); // Optional: only if backend supp
 
 // Event APIs
 const getEvents = () => api.get('/events');
-const bookTicket = (eventId) => api.post(`/events/${eventId}/book`);
+
+const getEventDetails = (id) => api.get(`/events/${id}`);
+
+const bookTicket = (eventId, numOfTickets) =>
+  api.post('/bookings', { eventId, numOfTickets });
 
 // Organizer APIs
 const getApprovedEvents = async (searchTerm = "", filter = {}) => {
@@ -47,6 +51,9 @@ const deleteEvent = async (id) => {
   await api.delete(`/events/${id}`);
 };
 
+// ✅ Profile API
+export const updateProfile = (data) => api.put('/users/profile', data);
+
 // Export all functions in a single object
 export default {
   login,
@@ -54,8 +61,10 @@ export default {
   forgotPassword,
   logout,
   getEvents,
+  getEventDetails,   // ✅ Newly added function
   bookTicket,
   getApprovedEvents,
   getMyEvents,
   deleteEvent,
+  updateProfile, // ✅ Added here
 };

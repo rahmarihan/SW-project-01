@@ -51,8 +51,8 @@ router.get(
 
 // Protected user profile
 router.route('/users/profile')
-    .get(authenticate, authorize(['user', 'admin']), getUserProfile)  // Only authenticated users or admins can get profile
-    .put(authenticate, authorize(['user', 'admin']), updateUserProfile);  // Only authenticated users or admins can update profile
+    .get(authenticate, authorize(['user', 'admin', 'organizer']), getUserProfile)
+    .put(authenticate, authorize(['user', 'admin', 'organizer']), updateUserProfile);
 
 
     

@@ -1,8 +1,8 @@
 // src/components/BookTicketForm.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
-const BookTicketForm = ({ eventId, availableTickets }) => {
+const BookTicketForm = ({ eventId, availableTickets, onBookingSuccess }) => {
   const [ticketsToBook, setTicketsToBook] = useState(1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -19,21 +19,31 @@ const BookTicketForm = ({ eventId, availableTickets }) => {
     setMessage('');
 
     try {
-      // Replace with your booking API endpoint and payload
-      const response = await axios.post(`/api/v1/events/${eventId}/book`, {
-        tickets: ticketsToBook,
-      });
+      // Use the correct endpoint and payload for booking
+      const response = await api.bookTicket(eventId, ticketsToBook);
 
       setMessage('Booking successful!');
+      if (onBookingSuccess) {
+        // If backend returns new availableTickets, use it; otherwise, subtract locally
+        const newAvailable =
+          response.data?.booking?.event?.remainingTickets !== undefined
+            ? response.data.booking.event.remainingTickets
+            : availableTickets - ticketsToBook;
+        onBookingSuccess(newAvailable);
+      }
+      setTicketsToBook(1); // Reset input
     } catch (error) {
-      setMessage('Booking failed. Please try again.');
+      setMessage(
+        error.response?.data?.message ||
+        'Booking failed. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 p-4 border rounded bg-gray-50 max-w-sm">
+    <form onSubmit={handleSubmit} className="mt-6 p-4 border rounded bg-gray-50 max-w-sm booking-form">
       <h3 className="text-lg font-semibold mb-2">Book Tickets</h3>
       <label className="block mb-2">
         Number of Tickets:
@@ -54,9 +64,11 @@ const BookTicketForm = ({ eventId, availableTickets }) => {
       >
         {loading ? 'Booking...' : 'Book'}
       </button>
-      {message && <p className="mt-2 text-sm text-red-600">{message}</p>}
+      {message && <p className={`mt-2 text-sm ${message.includes('success') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
     </form>
   );
 };
 
 export default BookTicketForm;
+
+

@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import EventCard from "./EventCard";
 import api from "../services/api";
 import { toast } from "react-toastify";
+import { Link, useLocation } from "react-router-dom";
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
   const [search, setSearch] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const location = useLocation();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -16,7 +17,6 @@ const EventList = () => {
         const response = await api.getApprovedEvents();
         const eventsArray = response.data || response;
         setEvents(eventsArray);
-        setFilteredEvents(eventsArray);
       } catch (error) {
         toast.error("Failed to load events.");
       }
@@ -25,7 +25,7 @@ const EventList = () => {
     fetchEvents();
   }, []);
 
-  useEffect(() => {
+  const filteredEvents = useMemo(() => {
     let filtered = [...events];
 
     if (search.trim()) {
@@ -46,48 +46,49 @@ const EventList = () => {
       );
     }
 
-    setFilteredEvents(filtered);
+    return filtered;
   }, [search, locationFilter, dateFilter, events]);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Browse Events</h2>
+    <div className="page-wrapper">
+      <div className="container">
+        <h2 className="text-2xl font-bold mb-4">Browse Events</h2>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search by title..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border rounded p-2 w-full sm:w-1/3"
-        />
-        <input
-          type="text"
-          placeholder="Filter by location..."
-          value={locationFilter}
-          onChange={(e) => setLocationFilter(e.target.value)}
-          className="border rounded p-2 w-full sm:w-1/3"
-        />
-        <input
-          type="date"
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
-          className="border rounded p-2 w-full sm:w-1/3"
-        />
-      </div>
-
-      {/* Event Cards */}
-      {filteredEvents.length === 0 ? (
-        <p className="text-gray-600">No events found.</p>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {filteredEvents.map((event, index) => {
-            const key = event._id || `${event.title}-${index}`; // Use _id as key
-            return <EventCard key={key} event={event} />;
-          })}
+        {/* Filters */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          <input
+            type="text"
+            placeholder="Search by title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="border rounded p-2 w-full sm:w-1/3"
+          />
+          <input
+            type="text"
+            placeholder="Filter by location..."
+            value={locationFilter}
+            onChange={(e) => setLocationFilter(e.target.value)}
+            className="border rounded p-2 w-full sm:w-1/3"
+          />
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="border rounded p-2 w-full sm:w-1/3"
+          />
         </div>
-      )}
+
+        {/* Event Cards */}
+        {filteredEvents.length === 0 ? (
+          <p className="text-gray-600">No events found.</p>
+        ) : (
+          <div className="event-list-grid">
+            {filteredEvents.map((event, index) => (
+              <EventCard event={event} key={event.id || `${event.title}-${index}`} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

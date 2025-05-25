@@ -1,16 +1,43 @@
+.page-wrapper {
+  flex: 1 0 auto;
+  background: #f6f7fb;
+  padding: 4.5rem 0 2rem 0; /* Add top padding for navbar height */
+  display: block;
+}
+
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
+  width: 100%;
+  max-width: 100vw;
+  margin: 2.5rem auto 2rem auto; /* Add a bit more top margin */
+  padding: 1rem 0.5rem;
+  box-sizing: border-box;
+}
+
+.event-list-grid {
+  display: grid;
+  gap: 1rem; /* Smaller gap */
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* More columns */
+  margin-top: 1.5rem;
 }
 
 .event-details {
   background-color: white;
-  padding: 2rem;
+  padding: 1.2rem 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 700px;
-  margin: 0 auto;
+  max-width: 600px; /* Reduced from 1000px */
+  width: 100%;        /* Make it fill the container */
+  margin: 2rem auto;  /* Add some vertical margin */
+  box-sizing: border-box;
+}
+
+.event-details-wrapper {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Add a little extra top margin for safety */
+  margin-top: 1rem;
 }
 
 .event-details h1 {
@@ -62,4 +89,158 @@
   margin-bottom: 1rem;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.event-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(107, 120, 239, 0.1), 0 1.5px 6px rgba(0, 0, 0, 0.04);
+  margin: 0.5rem 0;
+  padding: 0;
+  border: 1.5px solid #e6e8fa;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 200px; /* was 320px */
+  min-height: 140px;
+  max-width: 100%;
+}
+
+.event-card-title {
+  background: linear-gradient(90deg, #6b78ef 60%, #a6b1fa 100%);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e6e8fa;
+  letter-spacing: 0.5px;
+}
+
+.event-card-body {
+  padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.view-details-btn {
+  margin-top: 1rem;
+  align-self: flex-start;
+  background: #6b78ef;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  box-shadow: 0 2px 8px rgba(107, 120, 239, 0.08);
+}
+
+.view-details-btn:hover {
+  background: #2e41d5;
+}
+
+.login-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: #f6f7fb;
+  border: 1.5px solid #6b78ef;
+  color: #2e41d5;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin-top: 1.5rem;
+  font-size: 1.08rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(107, 120, 239, 0.07);
+}
+
+.login-alert a {
+  color: #2e41d5;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.login-alert span:first-child {
+  font-size: 1.5rem;
+  
+}
+
+/* Event Details Title */
+.event-title {
+  font-size: 1.5rem; /* Reduced from 2.2rem */
+  font-weight: 800;
+  color: #2e41d5;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+/* Info grid for event details */
+.event-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem; /* Slightly smaller gap */
+  margin-bottom: 1.2rem;
+}
+
+.event-info-row {
+  display: flex;
+  align-items: center;
+  background: #f6f7fb;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  box-shadow: 0 1px 4px rgba(107, 120, 239, 0.06);
+}
+
+.event-info-label {
+  min-width: 110px; /* Slightly smaller */
+  font-weight: 600;
+  color: #6b78ef;
+  margin-right: 1.2rem;
+  font-size: 0.98rem; /* Slightly smaller */
+}
+
+.event-info-value {
+  color: #222;
+  font-size: 0.98rem; /* Slightly smaller */
+}
+
+/* Actions row for booking and back button */
+.event-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+/* Style the back button to match the Book button */
+.back-button {
+  background-color: #6b78ef;
+  color: #fff;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 8px;
+  margin: 0;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(107, 120, 239, 0.10);
+  transition: background 0.18s;
+}
+
+.back-button:hover {
+  background: #2e41d5;
+}
+
+@media (max-width: 900px) {
+  .container {
+    padding: 0.5rem;
+  }
+  .event-list-grid {
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  .event-card {
+    min-width: 150px;
+  }
 }

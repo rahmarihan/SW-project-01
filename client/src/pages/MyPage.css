@@ -11,6 +11,7 @@ html, body {
 /* Full page wrapper fills full viewport height */
 .page-wrapper {
   min-height: 100vh; /* Full viewport height */
+  min-width: 100vw; /* explicitly full width */
   display: flex;
   flex-direction: column;
 }

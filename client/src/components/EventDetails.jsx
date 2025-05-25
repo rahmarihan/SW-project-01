@@ -3,51 +3,14 @@ import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import '../pages/event.css'; // Make sure this file includes the layout styles
-
-// Book ticket form component
-function BookTicketForm({ eventId, onBookingSuccess }) {
-  const [tickets, setTickets] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.post(`/api/v1/events/${eventId}/book`, {
-        ticketsToBook: tickets,
-      });
-      alert(res.data.message);
-      onBookingSuccess(res.data.remainingTickets);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Booking failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="booking-form">
-      <label>
-        Number of Tickets:{' '}
-        <input
-          type="number"
-          min="1"
-          value={tickets}
-          onChange={(e) => setTickets(parseInt(e.target.value, 10) || 1)}
-        />
-      </label>
-      <button type="submit" disabled={loading}>
-        {loading ? 'Booking...' : 'Book Tickets'}
-      </button>
-      {error && <p className="error">{error}</p>}
-    </form>
-  );
-}
+import api from '../services/api';
+import BookTicketForm from "./BookTicketForm";
 
 export default function EventDetails() {
   const { id } = useParams();
+  console.log("Event ID from URL params:", id);
+  console.log('Params:', useParams()); // Debugging line
+
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -58,12 +21,13 @@ export default function EventDetails() {
 
   const fetchEventDetails = async () => {
     try {
-      const res = await axios.get(`/api/v1/events/${id}`);
+      const res = await api.getEventDetails(id);
       console.log('API Response:', res.data); // Debug log
 
       // Adapt this based on your API's actual response shape:
       // Try res.data.data, res.data.event, or res.data itself
       const eventData = res.data.data || res.data.event || res.data;
+      console.log("FULL EVENT RESPONSE:", res.data);
 
       if (!eventData) {
         throw new Error('No event data found');
@@ -100,34 +64,58 @@ export default function EventDetails() {
   if (!event) return <p>No event found</p>;
 
   return (
-    <div className="container">
-      <div className="event-details">
-        <h1>{event.title || event.name || 'Untitled Event'}</h1>
-        <p>
-          <strong>Date:</strong>{' '}
-          {event.date ? new Date(event.date).toLocaleString() : 'N/A'}
-        </p>
-        <p><strong>Location:</strong> {event.location || 'N/A'}</p>
-        <p><strong>Description:</strong> {event.description || 'No description available'}</p>
-        <p><strong>Ticket Price:</strong> ${event.ticketPrice ?? event.price ?? 'N/A'}</p>
-        <p><strong>Available Tickets:</strong> {event.availableTickets ?? 'N/A'}</p>
+    <div className="page-wrapper">
+      <div className="event-details-wrapper">
+        <div className="event-details">
+          <h1 className="event-title">{event.title || event.name || 'Untitled Event'}</h1>
+          <div className="event-info-grid">
+            <div className="event-info-row">
+              <span className="event-info-label">Date:</span>
+              <span className="event-info-value">
+                {event.date ? new Date(event.date).toLocaleString() : 'N/A'}
+              </span>
+            </div>
+            <div className="event-info-row">
+              <span className="event-info-label">Location:</span>
+              <span className="event-info-value">{event.location || 'N/A'}</span>
+            </div>
+            <div className="event-info-row">
+              <span className="event-info-label">Description:</span>
+              <span className="event-info-value">{event.description || 'No description available'}</span>
+            </div>
+            <div className="event-info-row">
+              <span className="event-info-label">Ticket Price:</span>
+              <span className="event-info-value">${event.ticketPrice ?? event.price ?? 'N/A'}</span>
+            </div>
+            <div className="event-info-row">
+              <span className="event-info-label">Available Tickets:</span>
+              <span className="event-info-value">{event.availableTickets ?? 'N/A'}</span>
+            </div>
+          </div>
 
-        <button onClick={handleBack} className="back-button">← Back</button>
-
-        {user ? (
-          user.role === 'user' ? (
-            <BookTicketForm eventId={id} onBookingSuccess={handleBookingSuccess} />
-          ) : (
-            <p>Only users can book tickets.</p>
-          )
-        ) : (
-          <p>
-            Please <Link to="/login">log in</Link> to book tickets.
-          </p>
-        )}
-
-        {/* Debug: Show raw event data */}
-        {/* <pre>{JSON.stringify(event, null, 2)}</pre> */}
+          {/* Booking section */}
+          <div className="event-actions-row">
+            {user ? (
+              user.role === 'user' ? (
+                <BookTicketForm
+                  eventId={id}
+                  availableTickets={event.availableTickets}
+                  onBookingSuccess={handleBookingSuccess}
+                />
+              ) : (
+                <p className="only-user-msg">Only users can book tickets.</p>
+              )
+            ) : (
+              <div className="login-alert">
+                <span>🔒</span>
+                <span>
+                  Please <Link to="/login">log in</Link> to book tickets.
+                </span>
+              </div>
+            )}
+            <button onClick={handleBack} className="back-button">← Back</button>
+          </div>
+        </div>
       </div>
     </div>
   );

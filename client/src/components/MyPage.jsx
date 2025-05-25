@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link, useLocation } from 'react-router-dom'; // added Link & useLocation
+import { useNavigate, useLocation } from 'react-router-dom'; // merged useLocation
 import api from '../services/api';
 import { toast } from 'react-toastify';
-import EventCard from '../components/EventCard'; // ✅ Use EventCard
+import EventList from '../components/EventList';
 import '../pages/MyPage.css';
 
 function MyPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // get current location
+  const location = useLocation(); // merged useLocation
 
+  const [showProfile, setShowProfile] = useState(false);
   const [showEvents, setShowEvents] = useState(false);
   const [events, setEvents] = useState([]);
 
@@ -40,7 +41,10 @@ function MyPage() {
           <button onClick={() => setShowEvents(!showEvents)}>
             {showEvents ? 'Hide Events' : 'View Events'}
           </button>
-          <button onClick={() => navigate('/update-profile')}>Update Profile</button>
+          <button onClick={() => navigate('/update-profile')}>Edit Profile</button>
+          <button onClick={() => setShowProfile((prev) => !prev)}>
+            {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
+          </button>
           <button onClick={logout}>Logout</button>
         </nav>
       </header>
@@ -50,26 +54,21 @@ function MyPage() {
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Role:</strong> {user.role}</p>
 
+        {showProfile && (
+          <div style={{ marginTop: '2rem', border: '1px solid #ccc', padding: '1rem', borderRadius: 8 }}>
+            <h3>Profile Details</h3>
+            <p><strong>ID:</strong> {user.id || user._id}</p>
+            <p><strong>Name:</strong> {user.name}</p>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Role:</strong> {user.role}</p>
+            {/* Add more fields if available */}
+          </div>
+        )}
+
         {showEvents && (
           <div style={{ marginTop: '2rem' }}>
             <h3>All Events</h3>
-            {events.length === 0 ? (
-              <p>No events available.</p>
-            ) : (
-              <div className="event-list">
-               {events.map((event, index) => (
-                <Link
-                  key={event._id || `${event.title}-${index}`}
-                  to={`/events/${event._id}`}
-                  state={{ from: location.pathname }}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <EventCard event={event} />
-                </Link>
-              ))}
-
-              </div>
-            )}
+            <EventList />
           </div>
         )}
       </main>
