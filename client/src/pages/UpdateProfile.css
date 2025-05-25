@@ -1,0 +1,94 @@
+/* Center the form on the page */
+.update-profile-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background: #6c63ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.update-profile-form {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 24px 16px 18px 16px;   /* less padding */
+  max-width: 370px;               /* slightly smaller */
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.update-profile-form h3 {
+  text-align: center;
+  margin-bottom: 18px;
+  color: #2d3748;
+}
+
+.update-profile-form label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #2d3748;
+}
+
+.update-profile-form input,
+.update-profile-form select {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.update-profile-form input:focus,
+.update-profile-form select:focus {
+  border: 1.5px solid #6c63ff;
+}
+
+.update-profile-form button[type="submit"] {
+  background: #6c63ff;
+  color: #fff;
+  border: none;
+  padding: 10px 0;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+
+.update-profile-form button[type="submit"]:hover {
+  background: #5548c8;
+}
+
+.update-profile-form button[type="button"] {
+  background: #e2e8f0;
+  color: #2d3748;
+  border: none;
+  padding: 10px 0;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-left: 10px;
+  transition: background 0.2s;
+}
+
+.update-profile-form button[type="button"]:hover {
+  background: #cbd5e1;
+}
+
+@media (max-width: 500px) {
+  .update-profile-form {
+    max-width: 95vw;
+    padding: 12px 4vw;
+  }
+}

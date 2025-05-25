@@ -9,8 +9,8 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import ProfilePage from './pages/ProfilePage';
-import AdminUsersPage from './pages/AdminUsersPage';
-import AdminEventsPage from './pages/AdminEventsPage';
+import AdminUsersPage from './components/AdminUsersPage';
+import AdminEventsPage from './components/AdminEventsPage';
 import LoginForm from './components/LoginForm';
 import MyPage from './components/MyPage';
 import AdminPage from './components/AdminPage';
@@ -30,7 +30,7 @@ function App() {
   const isEventDetailsPage = /^\/events\/[^/]+$/.test(location.pathname);
 
   // Only show navbar on certain routes, excluding /events/:id
-  const showNavbar =
+  let showNavbar =
     location.pathname === '/' ||
     location.pathname === '/login' ||
     location.pathname === '/register' ||
@@ -38,9 +38,14 @@ function App() {
     location.pathname === '/unauthorized' ||
     (location.pathname.startsWith('/events') && !isEventDetailsPage);
 
+  // Hide navbar on /admin/events
+  if (location.pathname === '/admin/events') {
+    showNavbar = false;
+  }
+
   return (
     <>
-      <Navbar />
+      {showNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginForm />} />
@@ -87,6 +92,21 @@ function App() {
 
         {/* Update Profile */}
         <Route path="/update-profile" element={<UpdateProfile />} />
+
+        {/* Admin Events Route */}
+        <Route
+          path="/admin/events"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminEventsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={<AdminUsersPage />}
+        />
       </Routes>
       <Footer />
 

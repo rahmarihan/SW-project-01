@@ -1,9 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import '../pages/UpdateProfile.css';
 
 const UpdateProfileForm = () => {
   const { user, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -59,7 +62,7 @@ const UpdateProfileForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: '0 auto' }}>
+    <form onSubmit={handleSubmit} className="update-profile-form">
       <h3>Update Profile</h3>
 
       <label htmlFor="name">Name</label>
@@ -115,10 +118,31 @@ const UpdateProfileForm = () => {
         {loading ? 'Updating...' : 'Update'}
       </button>
 
+      {/* Back button */}
+      <button
+        type="button"
+        style={{ marginLeft: 10, marginTop: 15 }}
+        onClick={() => {
+          if (user?.role === 'admin') navigate('/admin');
+          else if (user?.role === 'organizer') navigate('/organizer');
+          else navigate('/my-page');
+        }}
+      >
+        Back
+      </button>
+
       {error && <p style={{ color: 'red', marginTop: 10 }}>{error}</p>}
       {success && <p style={{ color: 'green', marginTop: 10 }}>{success}</p>}
     </form>
   );
 };
 
-export default UpdateProfileForm;
+function UpdateProfilePage() {
+  return (
+    <div className="update-profile-bg">
+      <UpdateProfileForm />
+    </div>
+  );
+}
+
+export default UpdateProfilePage;
