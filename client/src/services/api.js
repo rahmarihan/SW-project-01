@@ -54,6 +54,12 @@ const deleteEvent = async (id) => {
 // ✅ Profile API
 export const updateProfile = (data) => api.put('/users/profile', data);
 
+// Get all events (public)
+const getAllEvents = () => api.get('/events/all');
+const getAllUsers = () => api.get('/users');
+const updateUserRole = (id, role) => api.put(`/users/${id}`, { role });
+const deleteUser = (id) => api.delete(`/users/${id}`);
+
 // Export all functions in a single object
 export default {
   login,
@@ -67,4 +73,8 @@ export default {
   getMyEvents,
   deleteEvent,
   updateProfile, // ✅ Added here
+  getAllEvents,
+  getAllUsers,
+  updateUserRole,
+  deleteUser,
 };

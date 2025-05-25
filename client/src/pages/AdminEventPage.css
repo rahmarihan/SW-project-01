@@ -1,0 +1,116 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.page-bg {
+  min-height: 100vh;
+  height: 100vh; /* Add this */
+  width: 100vw;  /* Add this */
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;     /* Add this */
+  padding: 0;    /* Add this */
+}
+
+.admin-events-container {
+  max-width: 600px; /* Reduce width for better centering */
+  width: 100%;
+  background: #6c63ff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  position: relative;
+}
+
+.admin-events-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #fff; /* White text for contrast */
+}
+
+.admin-events-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 18px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-events-table th, .admin-events-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.admin-events-table th {
+  background: #2d3748;
+  color: #fff;
+}
+
+.admin-events-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-events-table tr:hover {
+  background: #f1f5f9;
+}
+
+.status-approved {
+  color: #38a169;
+  font-weight: bold;
+}
+.status-pending {
+  color: #d69e2e;
+  font-weight: bold;
+}
+.status-declined {
+  color: #e53e3e;
+  font-weight: bold;
+}
+
+.action-btn {
+  margin-right: 8px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.action-btn.approve {
+  background: #38a169;
+  color: #fff;
+}
+.action-btn.decline {
+  background: #e53e3e;
+  color: #fff;
+}
+.action-btn.approve:hover {
+  background: #276749;
+}
+.action-btn.decline:hover {
+  background: #9b2c2c;
+}
+
+.back-btn {
+  margin-top: 32px;
+  float: right;
+  padding: 8px 18px;
+  background: #2d3748;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: background 0.2s;
+  clear: both;
+}
+.back-btn:hover {
+  background: #1a202c;
+}
