@@ -50,10 +50,7 @@ const createEvent = (eventData) => api.post('/events', eventData);
 
 const updateEvent = (id, eventData) => api.put(`/events/${id}`, eventData);
 
-// Export API functions
-const deleteEvent = async (id) => {
-  await api.delete(`/events/${id}`);
-};
+
 
 // Booking APIs
 const bookTickets = (eventId, numberOfTickets) =>
@@ -92,15 +89,6 @@ export default {
   createEvent,
   updateEvent,
   getAnalytics,
-  updateProfile,
-  bookTickets,
-  getUserBookings,
-  getBookingDetails,
-  cancelBooking,
-  getAllEvents,
-  getAllUsers,
-  updateUserRole,
-  deleteUser,
 };
 
 // Export axios instance separately
