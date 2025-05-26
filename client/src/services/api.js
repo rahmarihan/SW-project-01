@@ -58,6 +58,7 @@ const getAllEvents = () => api.get('/events/all');
 const getAllUsers = () => api.get('/users');
 const updateUserRole = (id, role) => api.put(`/users/${id}`, { role });
 const deleteUser = (id) => api.delete(`/users/${id}`);
+const updateEventStatus = (id, status) => api.put(`/events/${id}/status`, { status });
 
 // Export all functions in a single object
 export default {
@@ -69,6 +70,7 @@ export default {
   getEventDetails,   // ✅ Newly added function
   bookTicket,
   getApprovedEvents,
+  
   getMyEvents,
   deleteEvent,
   updateProfile, // ✅ Added here
@@ -76,4 +78,5 @@ export default {
   getAllUsers,
   updateUserRole,
   deleteUser,
+  updateEventStatus,
 };
