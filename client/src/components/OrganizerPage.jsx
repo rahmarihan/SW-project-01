@@ -12,7 +12,9 @@ function OrganizerPage() {
   const handleViewAnalytics = () => {
     navigate('/organizer/analytics');
   };
-
+  const handleViewEvents = () => {
+    navigate('/organizer/my-events');
+  };
   return (
     <div className="page-wrapper">
       <header className="navbar">
@@ -23,9 +25,16 @@ function OrganizerPage() {
           <button onClick={() => setShowProfile((prev) => !prev)}>
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
-          <button onClick={handleViewAnalytics}>View Event Analytics</button>
-          <button onClick={() => navigate('/my-events/create')}>+ Create New Event</button>
+
+          <button onClick={handleViewAnalytics} className="btn-primary mt-4">
+          View Event Analytics
+        </button>
+        <button onClick={handleViewEvents} className="btn-primary mt-4">
+          View Events
+        </button>
+
           <button onClick={logout}>Logout</button>
+
         </nav>
       </header>
 

@@ -38,7 +38,7 @@ const getApprovedEvents = async (searchTerm = '', filter = {}) => {
 };
 
 const getMyEvents = async () => {
-  const response = await api.get('/events/my');
+  const response = await api.get('/users/events');
   return response.data;
 };
 
