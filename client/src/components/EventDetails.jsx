@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import '../pages/event.css'; // Make sure this file includes the layout styles
 
@@ -15,7 +15,7 @@ function BookTicketForm({ eventId, onBookingSuccess }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post(`/api/v1/events/${eventId}/book`, {
+      const res = await api.post('/events/${eventId}/book', {
         ticketsToBook: tickets,
       });
       alert(res.data.message);
@@ -55,7 +55,7 @@ export default function EventDetails() {
 
   const fetchEventDetails = async () => {
     try {
-      const res = await axios.get(`/api/v1/events/${id}`);
+      const res = await api.get(`/events/${id}`);
       setEvent(res.data.data || res.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load event details');

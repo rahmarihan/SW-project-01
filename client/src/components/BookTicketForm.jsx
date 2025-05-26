@@ -1,6 +1,8 @@
 // src/components/BookTicketForm.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
+import api from '../services/api';  // Adjust path if needed
+
 
 const BookTicketForm = ({ eventId, availableTickets }) => {
   const [ticketsToBook, setTicketsToBook] = useState(1);
@@ -20,9 +22,10 @@ const BookTicketForm = ({ eventId, availableTickets }) => {
 
     try {
       // Replace with your booking API endpoint and payload
-      const response = await axios.post(`/api/v1/events/${eventId}/book`, {
-        tickets: ticketsToBook,
-      });
+      const response = await api.post(`/events/${eventId}/book`, {
+      tickets: ticketsToBook,
+    });
+
 
       setMessage('Booking successful!');
     } catch (error) {

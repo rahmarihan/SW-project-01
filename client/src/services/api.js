@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create Axios instance with base URL
 const api = axios.create({
-  baseURL: "http://localhost:5000/api/v1", // 🔁 Replace with your actual backend URL if needed
+  baseURL: "http://localhost:5000/api/v1", // Adjust as needed
 });
 
 // Attach token from localStorage to every request
@@ -21,33 +21,34 @@ api.interceptors.request.use(
 const login = (credentials) => api.post('/login', credentials);
 const register = (data) => api.post('/register', data);
 const forgotPassword = (data) => api.put('/forgetPassword', data);
-const logout = () => api.post('/auth/logout'); // Optional: only if backend supports logout
+const logout = () => api.post('/auth/logout'); // Optional endpoint if you have it
 
 // Event APIs
 const getEvents = () => api.get('/events');
 const bookTicket = (eventId) => api.post(`/events/${eventId}/book`);
+const getAnalytics = () => api.get('/users/events/analytics');
 
 // Organizer APIs
-const getApprovedEvents = async (searchTerm = "", filter = {}) => {
+const getApprovedEvents = (searchTerm = "", filter = {}) => {
   const params = {
     status: "approved",
     ...filter,
     ...(searchTerm && { search: searchTerm }),
   };
-  const response = await api.get("/events", { params });
-  return response.data;
+  return api.get("/events", { params }).then(res => res.data);
 };
 
-const getMyEvents = async () => {
-  const response = await api.get("/events/my");
-  return response.data;
-};
+const getMyEvents = () => api.get("/users/events").then(res => res.data);
 
-const deleteEvent = async (id) => {
-  await api.delete(`/events/${id}`);
-};
+//const getMyEvents = () => api.get("/events/my").then(res => res.data);
 
-// Export all functions in a single object
+const deleteEvent = (id) => api.delete(`/events/${id}`);
+
+const createEvent = (eventData) => api.post('/events', eventData);
+
+const updateEvent = (id, eventData) => api.put(`/events/${id}`, eventData);
+
+// Export API functions
 export default {
   login,
   register,
@@ -58,4 +59,10 @@ export default {
   getApprovedEvents,
   getMyEvents,
   deleteEvent,
+  createEvent,
+  updateEvent,
+  getAnalytics,
 };
+
+// Export axios instance separately
+export { api };

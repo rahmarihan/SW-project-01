@@ -6,7 +6,11 @@ function OrganizerPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  if (!user) return <p>Loading...</p>;
+  if (!user || user.role !== 'organizer') return null;
+
+  const handleViewAnalytics = () => {
+    navigate('/organizer/analytics');
+  };
 
   return (
     <div className="page-wrapper">
@@ -22,6 +26,9 @@ function OrganizerPage() {
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Role:</strong> {user.role}</p>
 
+        <button onClick={handleViewAnalytics} className="btn-primary mt-4">
+          View Event Analytics
+        </button>
       </main>
     </div>
   );

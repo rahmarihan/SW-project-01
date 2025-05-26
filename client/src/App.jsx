@@ -2,25 +2,25 @@ import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Unauthorized from './components/Unauthorized';
+import ProtectedRoute from './components/ProtectedRoute';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ProtectedRoute from './components/ProtectedRoute';
-import MyPage from './components/MyPage';
-import AdminPage from './components/AdminPage';
-import OrganizerPage from './components/OrganizerPage';
+import Unauthorized from './components/Unauthorized';
 
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import ForgotPassword from './components/ForgetPassword';
-import EventList from './components/EventList';
+import MyPage from './components/MyPage';
+import AdminPage from './components/AdminPage';
+import OrganizerPage from './components/OrganizerPage';
 import EventDetails from './components/EventDetails';
-import MyEvents from './components/MyEvents';
+
+import EventAnalytics from './components/EventAnalytics';
+
+import MyEventsPage from "./components/MyEventsPage";
+
 import EventForm from './components/EventForm';
-// import EventList from './pages/EventList';
-// import AdminDashboard from './pages/AdminDashboard';
-// import OrganizerPanel from './pages/OrganizerPanel';
 
 function App() {
   return (
@@ -35,7 +35,7 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/events/:id" element={<EventDetails />} />
 
-        {/* User Role Route */}
+        {/* User Route */}
         <Route
           path="/my-page"
           element={
@@ -55,7 +55,7 @@ function App() {
           }
         />
 
-        {/* Organizer Route */}
+        {/* Organizer Routes */}
         <Route
           path="/organizer"
           element={
@@ -65,10 +65,43 @@ function App() {
           }
         />
 
-        {/* Organizer routes */}
-        <Route path="/my-events" element={<MyEvents />} />
-        <Route path="/my-events/create" element={<EventForm />} />
-        <Route path="/my-events/edit/:id" element={<EventForm />} />
+        <Route
+          path="/organizer/analytics"
+          element={
+            <ProtectedRoute allowedRoles={['organizer']}>
+              <EventAnalytics />
+            </ProtectedRoute>
+          }
+        />
+
+       <Route
+  path="/organizer/my-events"
+  element={
+    <ProtectedRoute allowedRoles={['organizer']}>
+      <MyEventsPage />
+    </ProtectedRoute>
+  }
+/>
+
+        {/* ✅ Event Creation */}
+        <Route
+          path="/my-events/create"
+          element={
+            <ProtectedRoute allowedRoles={['organizer']}>
+              <EventForm />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ Event Editing */}
+        <Route
+          path="/my-events/edit/:id"
+          element={
+            <ProtectedRoute allowedRoles={['organizer']}>
+              <EventForm />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
       <Footer />
