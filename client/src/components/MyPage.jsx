@@ -46,7 +46,15 @@ function MyPage() {
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
           <button onClick={() => navigate('/my-bookings')}>My Bookings</button> {/* <-- Add this */}
-          <button onClick={logout}>Logout</button>
+          <button
+            onClick={() => {
+              logout();
+              toast.success('Logged out successfully');
+              navigate('/');
+            }}
+          >
+            Logout
+          </button>
         </nav>
       </header>
 

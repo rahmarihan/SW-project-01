@@ -66,6 +66,7 @@ const getAllEvents = () => api.get('/events/all');
 const getAllUsers = () => api.get('/users');
 const updateUserRole = (id, role) => api.put(`/users/${id}`, { role });
 const deleteUser = (id) => api.delete(`/users/${id}`);
+const updateEventStatus = (id, status) => api.put(`/events/${id}/status`, { status });
 
 // Analytics API
 const getAnalytics = () => api.get('/events/users/events/analytics');
@@ -79,6 +80,7 @@ export default {
   getEventDetails,
   bookTicket,
   getApprovedEvents,
+  
   getMyEvents,
   deleteEvent,
   updateProfile,
@@ -90,5 +92,6 @@ export default {
   getAllUsers,
   updateUserRole,
   deleteUser,
+  updateEventStatus,
   getAnalytics,
 };

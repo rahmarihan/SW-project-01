@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { toast } from 'react-toastify';
 
 function AdminPage() {
   const { user, logout } = useAuth();
@@ -12,6 +13,13 @@ function AdminPage() {
   const [loadingEvents, setLoadingEvents] = useState(false);
 
   if (!user) return <p>Loading...</p>;
+
+  // Custom logout handler to show toast
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
+    navigate('/'); // Optionally redirect to home or login
+  };
 
   const handleShowEvents = async () => {
     setShowEvents((prev) => !prev);
@@ -35,19 +43,28 @@ function AdminPage() {
     <div className="page-wrapper">
       <header className="navbar">
         <h1 className="logo">👑 Admin Dashboard</h1>
-        <nav className="nav-buttons">
+        <nav
+          className="nav-buttons"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+          }}
+        >
           <button onClick={() => navigate('/')}>Home</button>
           <button onClick={() => navigate('/update-profile')}>Edit Profile</button>
           <button onClick={() => setShowProfile((prev) => !prev)}>
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
-          <button onClick={logout}>Logout</button>
           <button onClick={() => navigate('/admin/events')}>
             View & Manage All Events
           </button>
           <button onClick={() => navigate('/admin/users')}>
             Manage Users
           </button>
+          {/* Spacer div pushes logout to the right */}
+          <div style={{ flex: 1 }} />
+          <button onClick={handleLogout}>Logout</button>
         </nav>
       </header>
 
