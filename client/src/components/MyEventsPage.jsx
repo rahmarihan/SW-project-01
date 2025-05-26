@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import MyEventCard from './MyEventCard';
+import { toast } from 'react-toastify';
 
 export default function MyEventsPage() {
   const { user, logout } = useAuth();
@@ -19,7 +20,7 @@ export default function MyEventsPage() {
         setEvents(res.events || []);
       } catch (err) {
         console.error('Error fetching events:', err.response?.data?.message || err.message);
-        alert('Failed to load your events');
+        toast.error("Failed to load event details");
         setEvents([]);
       } finally {
         setLoading(false);
