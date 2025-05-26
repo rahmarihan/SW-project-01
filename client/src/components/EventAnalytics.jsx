@@ -72,21 +72,7 @@ export default function EventAnalytics() {
   if (!data) return <p className="p-4">Loading analytics...</p>;
 
   return (
-    <div className="page-wrapper">
-      <header className="navbar">
-        <h1 className="logo">🎤 Event Analytics</h1>
-        <nav className="nav-buttons">
-          <button onClick={() => navigate("/")}>Home</button>
-          <button onClick={() => navigate("/update-profile")}>
-            Edit Profile
-          </button>
-          <button onClick={() => navigate("/organizer/my-events")} className="btn-primary">
-            My Events
-          </button>
-          <button onClick={logout}>Logout</button>
-        </nav>
-      </header>
-
+    <div className="page-wrapper" style={{ position: 'relative', minHeight: '100vh' }}>
       <main className="content p-6 w-full max-w-3xl mx-auto">
         <h2 className="text-xl font-bold mb-4">Ticket Analytics</h2>
 
@@ -127,6 +113,26 @@ export default function EventAnalytics() {
           </BarChart>
         </ResponsiveContainer>
       </main>
+      <button
+        onClick={() => navigate('/organizer')}
+        className="back-btn"
+        style={{
+          position: 'fixed',
+          right: '2.5rem',
+          bottom: '2.5rem',
+          background: '#2e41d5',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '50px',
+          padding: '0.9em 2em',
+          fontSize: '1.1rem',
+          fontWeight: 600,
+          zIndex: 1000,
+          boxShadow: '0 2px 8px rgba(44,62,80,0.10)'
+        }}
+      >
+        ← Back
+      </button>
     </div>
   );
 }
