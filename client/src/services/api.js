@@ -1,11 +1,4 @@
-
-// 🔵 apiAndProtectedRoute.js
-
-// --- Axios API service ---
 import axios from 'axios';
-import React, { useContext, useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
 
 // Axios instance
 const api = axios.create({
@@ -74,34 +67,8 @@ const getAllUsers = () => api.get('/users');
 const updateUserRole = (id, role) => api.put(`/users/${id}`, { role });
 const deleteUser = (id) => api.delete(`/users/${id}`);
 
-// --- ProtectedRoute component ---
-export function ProtectedRoute({ children, allowedRoles }) {
-  const { user, loading } = useContext(AuthContext);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user && !loading) {
-      navigate('/login');
-    }
-  }, [user, loading, navigate]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (allowedRoles?.length > 0 && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return children;
-}
-
-// Export all APIs
-export const apiService = {
+export default {
   login,
   register,
   forgotPassword,
