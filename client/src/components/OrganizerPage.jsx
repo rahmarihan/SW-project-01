@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function OrganizerPage() {
   const { user, logout } = useAuth();
@@ -26,6 +27,7 @@ function OrganizerPage() {
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
 
+
           <button onClick={handleViewAnalytics} className="btn-primary mt-4">
             View Event Analytics
           </button>
@@ -36,6 +38,7 @@ function OrganizerPage() {
             + Create Event
           </button>
           <button onClick={logout}>Logout</button>
+
 
         </nav>
       </header>

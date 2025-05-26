@@ -25,7 +25,7 @@ const AdminEventsPage = () => {
 
   const handleStatusChange = (id, status) => {
     api
-      .put(`/events/${id}/status`, { status })
+      .updateEventStatus(id, status)
       .then(() => {
         toast.success(`Event ${status}`);
         fetchEvents();
