@@ -38,9 +38,9 @@ const MyEventCard = ({ event }) => {
       <p>Date: {new Date(event.date).toLocaleDateString()}</p>
       <p>Location: {event.location}</p>
       <p>Price: ${event.ticketPrice}</p>
-      <button onClick={handleEdit} className="mt-2 text-blue-500">
+      {/* <button onClick={handleEdit} className="mt-2 text-blue-500">
         Edit Event
-      </button>
+      </button> */}
       <button onClick={handleDelete} className="mt-2 text-blue-500">
         Delete
       </button>
