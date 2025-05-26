@@ -6,6 +6,7 @@ import '../pages/event.css'; // Make sure this file includes the layout styles
 import api from '../services/api';
 import BookTicketForm from "./BookTicketForm";
 
+
 export default function EventDetails() {
   const { id } = useParams();
   console.log("Event ID from URL params:", id);
@@ -21,6 +22,7 @@ export default function EventDetails() {
 
   const fetchEventDetails = async () => {
     try {
+
       const res = await api.getEventDetails(id);
       console.log('API Response:', res.data); // Debug log
 
@@ -33,6 +35,7 @@ export default function EventDetails() {
         throw new Error('No event data found');
       }
       setEvent(eventData);
+
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Failed to load event details');
     } finally {
