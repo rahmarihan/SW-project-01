@@ -7,7 +7,11 @@ function OrganizerPage() {
   const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
 
-  if (!user) return <p>Loading...</p>;
+  if (!user || user.role !== 'organizer') return null;
+
+  const handleViewAnalytics = () => {
+    navigate('/organizer/analytics');
+  };
 
   return (
     <div className="page-wrapper">
@@ -19,7 +23,7 @@ function OrganizerPage() {
           <button onClick={() => setShowProfile((prev) => !prev)}>
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
-          {/* <button onClick={logout}>Logout</button> */}
+          <button onClick={logout}>Logout</button>
         </nav>
       </header>
 
@@ -38,6 +42,9 @@ function OrganizerPage() {
             {/* Add more fields if available */}
           </div>
         )}
+        <button onClick={handleViewAnalytics} className="btn-primary mt-4">
+          View Event Analytics
+        </button>
       </main>
     </div>
   );

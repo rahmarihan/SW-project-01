@@ -1,8 +1,14 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;        /* Remove or set to 0 */
   text-align: center;
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .logo {
@@ -45,4 +51,25 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
+  background: #6b78ef;
+  font-family: Arial, sans-serif;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Add to your global CSS, e.g., App.css */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-wrapper {
+  flex: 1; /* This makes the content area grow and push the footer down */
 }
