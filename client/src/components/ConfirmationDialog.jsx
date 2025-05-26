@@ -1,14 +1,17 @@
 import React from 'react';
 
 const ConfirmationDialog = ({ open, title, message, onConfirm, onCancel }) => {
-  if (!open) return null; // Only render when open is true
-
+  if (!open) return null;
   return (
     <div className="modal">
-      <h3>{title}</h3>
-      <p>{message}</p>
-      <button onClick={onConfirm} style={{ marginRight: 8 }}>Yes</button>
-      <button onClick={onCancel}>No</button>
+      <div className="modal-content">
+        <h3>{title}</h3>
+        <p>{message}</p>
+        <div className="modal-btn-group">
+          <button className="modal-btn confirm" onClick={onConfirm}>Confirm</button>
+          <button className="modal-btn cancel" onClick={onCancel}>Cancel</button>
+        </div>
+      </div>
     </div>
   );
 };
