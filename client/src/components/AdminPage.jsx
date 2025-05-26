@@ -41,20 +41,18 @@ function AdminPage() {
           <button onClick={() => setShowProfile((prev) => !prev)}>
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
-          <button onClick={logout}>Logout</button>
           <button onClick={() => navigate('/admin/events')}>
             View & Manage All Events
           </button>
           <button onClick={() => navigate('/admin/users')}>
             Manage Users
           </button>
+          <button onClick={logout}>Logout</button>
         </nav>
       </header>
 
       <main className="content">
         <h2>WELCOME {user.name.toUpperCase()}!</h2>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Role:</strong> {user.role}</p>
 
         {showProfile && (
           <div style={{ marginTop: '2rem', border: '1px solid #ccc', padding: '1rem', borderRadius: 8 }}>
@@ -63,6 +61,7 @@ function AdminPage() {
             <p><strong>Name:</strong> {user.name}</p>
             <p><strong>Email:</strong> {user.email}</p>
             <p><strong>Role:</strong> {user.role}</p>
+            {/* Add more fields if available */}
           </div>
         )}
 

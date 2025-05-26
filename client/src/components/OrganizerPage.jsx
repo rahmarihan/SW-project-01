@@ -23,14 +23,14 @@ function OrganizerPage() {
           <button onClick={() => setShowProfile((prev) => !prev)}>
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
+          <button onClick={handleViewAnalytics}>View Event Analytics</button>
+          <button onClick={() => navigate('/my-events/create')}>+ Create New Event</button>
           <button onClick={logout}>Logout</button>
         </nav>
       </header>
 
       <main className="content">
         <h2>WELCOME {user.name.toUpperCase()}!</h2>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Role:</strong> {user.role}</p>
 
         {showProfile && (
           <div style={{ marginTop: '2rem', border: '1px solid #ccc', padding: '1rem', borderRadius: 8 }}>
@@ -42,9 +42,6 @@ function OrganizerPage() {
             {/* Add more fields if available */}
           </div>
         )}
-        <button onClick={handleViewAnalytics} className="btn-primary mt-4">
-          View Event Analytics
-        </button>
       </main>
     </div>
   );

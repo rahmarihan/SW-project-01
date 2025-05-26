@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 import { toast } from "react-toastify";
+import '../pages/EventForm.css';
 
 const EventForm = () => {
   const { id } = useParams(); // event id for edit, undefined for create
@@ -21,15 +22,14 @@ const EventForm = () => {
       // Fetch existing event data for edit
       const fetchEvent = async () => {
         try {
-          const response = await api.get(`/events/${id}`);
-          const event = response.data;
+          const event = await api.getEventDetails(id);
           setFormData({
-            title: event.title || "",
-            date: event.date ? event.date.split("T")[0] : "", // format for input type=date
-            location: event.location || "",
-            totalTickets: event.totalTickets || "", // renamed field here
-            ticketPrice: event.ticketPrice || "",
-            description: event.description || "",
+            title: event.data.title || "",
+            date: event.data.date ? event.data.date.split("T")[0] : "", // format for input type=date
+            location: event.data.location || "",
+            totalTickets: event.data.totalTickets || "", // renamed field here
+            ticketPrice: event.data.ticketPrice || "",
+            description: event.data.description || "",
           });
         } catch (error) {
           toast.error("Failed to load event details");
@@ -59,14 +59,14 @@ const EventForm = () => {
     try {
       if (id) {
         // Edit event
-        await api.put(`/events/${id}`, formData);
+        await api.updateEvent(id, formData);
         toast.success("Event updated successfully");
       } else {
         // Create event
-        await api.post("/events", formData);
+        await api.createEvent(formData);
         toast.success("Event created successfully");
       }
-      navigate("/my-events"); // Redirect organizer to their events list
+      navigate("/organizer"); // Redirect organizer to their dashboard
     } catch (error) {
       console.error(error);
       toast.error("Failed to save event");
@@ -74,47 +74,44 @@ const EventForm = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-4">{id ? "Edit Event" : "Create New Event"}</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <div className="event-form-container">
+      <h2>{id ? "Edit Event" : "Create New Event"}</h2>
+      <form onSubmit={handleSubmit} className="event-form">
         <label>
-          Title<span className="text-red-500">*</span>:
+          Title<span style={{ color: '#e74c3c' }}>*</span>:
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
             required
-            className="border p-2 rounded w-full"
           />
         </label>
 
         <label>
-          Date<span className="text-red-500">*</span>:
+          Date<span style={{ color: '#e74c3c' }}>*</span>:
           <input
             type="date"
             name="date"
             value={formData.date}
             onChange={handleChange}
             required
-            className="border p-2 rounded w-full"
           />
         </label>
 
         <label>
-          Location<span className="text-red-500">*</span>:
+          Location<span style={{ color: '#e74c3c' }}>*</span>:
           <input
             type="text"
             name="location"
             value={formData.location}
             onChange={handleChange}
             required
-            className="border p-2 rounded w-full"
           />
         </label>
 
         <label>
-          Total Tickets<span className="text-red-500">*</span>:
+          Total Tickets<span style={{ color: '#e74c3c' }}>*</span>:
           <input
             type="number"
             name="totalTickets"
@@ -122,12 +119,11 @@ const EventForm = () => {
             onChange={handleChange}
             min="0"
             required
-            className="border p-2 rounded w-full"
           />
         </label>
 
         <label>
-          Ticket Price ($)<span className="text-red-500">*</span>:
+          Ticket Price ($)<span style={{ color: '#e74c3c' }}>*</span>:
           <input
             type="number"
             name="ticketPrice"
@@ -136,7 +132,6 @@ const EventForm = () => {
             min="0"
             step="0.01"
             required
-            className="border p-2 rounded w-full"
           />
         </label>
 
@@ -147,14 +142,10 @@ const EventForm = () => {
             value={formData.description}
             onChange={handleChange}
             rows="4"
-            className="border p-2 rounded w-full"
           />
         </label>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
+        <button type="submit">
           {id ? "Update Event" : "Create Event"}
         </button>
       </form>

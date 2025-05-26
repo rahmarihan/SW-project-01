@@ -46,6 +46,10 @@ const deleteEvent = async (id) => {
   await api.delete(`/events/${id}`);
 };
 
+// Event create/edit APIs
+const createEvent = (data) => api.post('/events', data);
+const updateEvent = (id, data) => api.put(`/events/${id}`, data);
+
 // Booking APIs
 const bookTickets = (eventId, numberOfTickets) =>
   api.post('/bookings', { eventId, numOfTickets: numberOfTickets }).then((res) => res.data);

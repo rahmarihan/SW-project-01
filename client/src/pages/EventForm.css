@@ -1,0 +1,59 @@
+/* EventForm.css - Styles for the event creation/edit form */
+.event-form-container {
+  max-width: 500px;
+  margin: 2.5rem auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(44, 62, 80, 0.10);
+  padding: 2.5rem 2rem 2rem 2rem;
+}
+.event-form-container h2 {
+  color: #2e41d5;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.event-form label {
+  font-weight: 600;
+  color: #2e41d5;
+  margin-bottom: 0.3rem;
+}
+.event-form input,
+.event-form textarea {
+  border: 1.5px solid #e0e6f7;
+  border-radius: 7px;
+  padding: 0.7em 1em;
+  font-size: 1rem;
+  background: #f7f9fe;
+  color: #222;
+  transition: border 0.2s;
+}
+.event-form input:focus,
+.event-form textarea:focus {
+  border-color: #6b78ef;
+  outline: none;
+}
+.event-form button[type="submit"] {
+  background: #2e41d5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9em 2em;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1.2rem;
+  transition: background 0.2s;
+}
+.event-form button[type="submit"]:hover {
+  background: #6b78ef;
+}
+@media (max-width: 600px) {
+  .event-form-container {
+    padding: 1.2rem 0.5rem;
+  }
+}
