@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import UserRow from './UserRow';
 import ConfirmationDialog from './ConfirmationDialog';
+import '../pages/AdminUsersPage.css';
 
 const AdminUsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -66,78 +67,82 @@ const AdminUsersPage = () => {
   };
 
   return (
-    <div className="container">
-      <h2>All Users</h2>
-      <table border="1" cellPadding="10" cellSpacing="0">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(Array.isArray(users) ? users : []).map((user) => (
-            <UserRow
-              key={user._id}
-              user={user}
-              onUpdateRole={openRoleModal}
-              onDelete={openDeleteDialog}
-            />
-          ))}
-        </tbody>
-      </table>
+    <div className="page-bg">
+      <div className="admin-users-container">
+        <div className="container">
+          <h2>All Users</h2>
+          <table className="admin-users-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(Array.isArray(users) ? users : []).map((user) => (
+                <UserRow
+                  key={user._id}
+                  user={user}
+                  onUpdateRole={openRoleModal}
+                  onDelete={openDeleteDialog}
+                />
+              ))}
+            </tbody>
+          </table>
 
-      {/* Role update modal */}
-      {showRoleModal && (
-        <div className="modal">
-          <h3>Update Role for {selectedUser.name}</h3>
-          <select
-            value={selectedUser.role}
-            onChange={e => setSelectedUser({ ...selectedUser, role: e.target.value })}
-          >
-            <option value="user">User</option>
-            <option value="organizer">Organizer</option>
-            <option value="admin">Admin</option>
-          </select>
+          {/* Role update modal */}
+          {showRoleModal && (
+            <div className="modal">
+              <h3>Update Role for {selectedUser.name}</h3>
+              <select
+                value={selectedUser.role}
+                onChange={e => setSelectedUser({ ...selectedUser, role: e.target.value })}
+              >
+                <option value="user">User</option>
+                <option value="organizer">Organizer</option>
+                <option value="admin">Admin</option>
+              </select>
+              <button
+                onClick={() => {
+                  handleRoleUpdate(selectedUser.role);
+                }}
+                style={{ marginRight: 8 }}
+              >
+                Confirm
+              </button>
+              <button onClick={() => setShowRoleModal(false)}>Cancel</button>
+            </div>
+          )}
+
+          {/* Delete confirmation dialog */}
+          <ConfirmationDialog
+            open={showConfirmDialog}
+            title="Delete User"
+            message={`Delete user "${selectedUser?.name}"?`}
+            onConfirm={handleDelete}
+            onCancel={() => setShowConfirmDialog(false)}
+          />
+
+          {/* Back to Admin Dashboard button */}
           <button
-            onClick={() => {
-              handleRoleUpdate(selectedUser.role);
+            style={{
+              marginTop: 32,
+              padding: '8px 18px',
+              background: '#2d3748',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
             }}
-            style={{ marginRight: 8 }}
+            onClick={() => navigate('/admin')}
           >
-            Confirm
+            ← Back to Admin Dashboard
           </button>
-          <button onClick={() => setShowRoleModal(false)}>Cancel</button>
         </div>
-      )}
-
-      {/* Delete confirmation dialog */}
-      <ConfirmationDialog
-        open={showConfirmDialog}
-        title="Delete User"
-        message={`Delete user "${selectedUser?.name}"?`}
-        onConfirm={handleDelete}
-        onCancel={() => setShowConfirmDialog(false)}
-      />
-
-      {/* Back to Admin Dashboard button */}
-      <button
-        style={{
-          marginTop: 32,
-          padding: '8px 18px',
-          background: '#2d3748',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontWeight: 'bold'
-        }}
-        onClick={() => navigate('/admin')}
-      >
-        ← Back to Admin Dashboard
-      </button>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function OrganizerPage() {
   const { user, logout } = useAuth();
@@ -23,7 +24,15 @@ function OrganizerPage() {
           <button onClick={() => setShowProfile((prev) => !prev)}>
             {showProfile ? 'Hide Profile Details' : 'View Profile Details'}
           </button>
-          <button onClick={logout}>Logout</button>
+          <button
+            onClick={() => {
+              logout();
+              toast.success('Logged out successfully');
+              navigate('/');
+            }}
+          >
+            Logout
+          </button>
         </nav>
       </header>
 

@@ -92,9 +92,6 @@ export default {
   getAllUsers,
   updateUserRole,
   deleteUser,
-<<<<<<< HEAD
   updateEventStatus,
-=======
   getAnalytics,
->>>>>>> 76c7a14399663ab311a8ac88d6b18f524a720738
 };
