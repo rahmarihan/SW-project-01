@@ -15,6 +15,7 @@ const MyEventsPage = () => {
     
     const fetchMyEvents = async () => {
       try {
+        
         const res =  await api.getMyEvents(); // Adjust API endpoint as needed
         console.log('Events fetched:', res);
         setEvents(res.events|| []);
