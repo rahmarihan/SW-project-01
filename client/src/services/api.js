@@ -67,6 +67,8 @@ const getAllUsers = () => api.get('/users');
 const updateUserRole = (id, role) => api.put(`/users/${id}`, { role });
 const deleteUser = (id) => api.delete(`/users/${id}`);
 
+// Analytics API
+const getAnalytics = () => api.get('/events/users/events/analytics');
 
 export default {
   login,
@@ -88,4 +90,5 @@ export default {
   getAllUsers,
   updateUserRole,
   deleteUser,
+  getAnalytics,
 };
