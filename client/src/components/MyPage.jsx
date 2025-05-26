@@ -54,13 +54,14 @@ function MyPage() {
         <h2 className="welcome-message">Welcome, {user.name}! 🎉</h2>
 
         {showProfile && (
-          <div style={{ marginTop: '2rem', border: '1px solid #ccc', padding: '1rem', borderRadius: 8 }}>
+          <div className="profile-details-card">
             <h3>Profile Details</h3>
-            <p><strong>ID:</strong> {user.id || user._id}</p>
-            <p><strong>Name:</strong> {user.name}</p>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Role:</strong> {user.role}</p>
-            {/* Add more fields if available */}
+            <div className="profile-details-list">
+              <div><span className="profile-label">ID:</span> <span className="profile-value">{user.id || user._id}</span></div>
+              <div><span className="profile-label">Name:</span> <span className="profile-value">{user.name}</span></div>
+              <div><span className="profile-label">Email:</span> <span className="profile-value">{user.email}</span></div>
+              <div><span className="profile-label">Role:</span> <span className="profile-value">{user.role}</span></div>
+            </div>
           </div>
         )}
 

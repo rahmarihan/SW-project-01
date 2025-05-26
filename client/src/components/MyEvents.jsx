@@ -36,12 +36,7 @@ const MyEvents = () => {
     <div className="max-w-5xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">My Events</h2>
-        <Link
-          to="/my-events/create"
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-        >
-          Create New Event
-        </Link>
+        {/* Removed Create New Event button from here; now in OrganizerPage navbar */}
       </div>
 
       {events.length === 0 ? (
@@ -67,7 +62,17 @@ const MyEvents = () => {
                 <td className="border border-gray-300 p-2">{event.location}</td>
                 <td className="border border-gray-300 p-2">{event.availableTickets}</td>
                 <td className="border border-gray-300 p-2">${event.ticketPrice}</td>
-                <td className="border border-gray-300 p-2">{event.status}</td>
+                <td className="border border-gray-300 p-2">
+                  <span
+                    className={`status-label status-${event.status}`}
+                    title={event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                  >
+                    {event.status === 'approved' && <span role="img" aria-label="approved">✔️</span>}
+                    {event.status === 'pending' && <span role="img" aria-label="pending">⏳</span>}
+                    {event.status === 'declined' && <span role="img" aria-label="declined">❌</span>}
+                    <span style={{ marginLeft: 6, textTransform: 'capitalize' }}>{event.status}</span>
+                  </span>
+                </td>
                 <td className="border border-gray-300 p-2 space-x-2">
                   <Link
                     to={`/my-events/edit/${event._id}`}

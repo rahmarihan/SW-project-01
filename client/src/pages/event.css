@@ -232,6 +232,83 @@
   background: #2e41d5;
 }
 
+/* Profile Details Card */
+.profile-details-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(44, 62, 80, 0.10);
+  padding: 2rem 2rem 1.5rem 2rem;
+  margin: 2rem auto 0 auto;
+  max-width: 420px;
+  border: 1.5px solid #e0e6f7;
+}
+.profile-details-card h3 {
+  color: #2e41d5;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+.profile-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.profile-label {
+  font-weight: 600;
+  color: #6b78ef;
+  min-width: 80px;
+  display: inline-block;
+}
+.profile-value {
+  color: #222;
+  font-size: 1.05rem;
+  margin-left: 0.5rem;
+}
+
+/* Event Images in Cards and Details View */
+.event-card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  margin-bottom: 0.5rem;
+  background: #f6f7fb;
+}
+.event-details-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  background: #f6f7fb;
+}
+
+/* Status Labels for MyEvents Table */
+.status-label {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.18em 0.7em;
+  font-size: 0.98em;
+  letter-spacing: 0.01em;
+}
+.status-approved {
+  color: #38a169;
+  background: #e6fffa;
+  border: 1.5px solid #38a169;
+}
+.status-pending {
+  color: #d69e2e;
+  background: #fffbea;
+  border: 1.5px solid #d69e2e;
+}
+.status-declined {
+  color: #e53e3e;
+  background: #fff5f5;
+  border: 1.5px solid #e53e3e;
+}
+
 @media (max-width: 900px) {
   .container {
     padding: 0.5rem;

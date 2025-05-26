@@ -49,24 +49,20 @@ const EventForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Basic validation: now include totalTickets and ticketPrice
     if (!formData.title || !formData.date || !formData.location || !formData.totalTickets || !formData.ticketPrice) {
       toast.error("Please fill in all required fields");
       return;
     }
-
     try {
+      // Only send formData as JSON, not FormData
       if (id) {
-        // Edit event
         await api.updateEvent(id, formData);
         toast.success("Event updated successfully");
       } else {
-        // Create event
         await api.createEvent(formData);
         toast.success("Event created successfully");
       }
-      navigate("/organizer"); // Redirect organizer to their dashboard
+      navigate("/organizer");
     } catch (error) {
       console.error(error);
       toast.error("Failed to save event");

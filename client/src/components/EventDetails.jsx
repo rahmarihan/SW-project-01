@@ -68,6 +68,15 @@ export default function EventDetails() {
       <div className="event-details-wrapper">
         <div className="event-details">
           <h1 className="event-title">{event.title || event.name || 'Untitled Event'}</h1>
+          {event.image && (
+            <img
+              src={event.image}
+              alt={event.title}
+              className="event-details-image"
+              style={{ maxWidth: '100%', borderRadius: '12px', marginBottom: '1.5rem' }}
+              onError={e => (e.target.style.display = 'none')}
+            />
+          )}
           <div className="event-info-grid">
             <div className="event-info-row">
               <span className="event-info-label">Date:</span>

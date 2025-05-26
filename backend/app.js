@@ -4,6 +4,8 @@ const mongoose = require("mongoose")
 const cookieParser = require('cookie-parser')
 const cors = require("cors")
 const connectDB = require('./config/db');
+const multer = require('multer');
+const path = require('path');
 
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
 console.log("NODE_ENV:", process.env.NODE_ENV);
@@ -20,6 +22,9 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(express.json())
+
+// Serve uploads folder statically
+app.use('/uploads', require('express').static(path.join(__dirname, 'uploads')));
 
 const userRoutes = require('./Routes/userRoutes')
 const eventRoutes = require('./Routes/eventRoutes')

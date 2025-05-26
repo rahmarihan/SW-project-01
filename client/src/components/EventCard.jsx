@@ -12,6 +12,14 @@ const EventCard = ({ event }) => {
 
   return (
     <div className="event-card">
+      {event.image && (
+        <img
+          src={event.image}
+          alt={event.title}
+          className="event-card-image"
+          onError={e => (e.target.style.display = 'none')}
+        />
+      )}
       <div className="event-card-title">
         {event.title}
       </div>

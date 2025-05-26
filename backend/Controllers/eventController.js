@@ -3,7 +3,6 @@ const ErrorResponse = require('../utils/errorResponse'); // Assuming you have cu
 const _ = require('lodash');
 const mongoose = require('mongoose');
 
-
 // 12 API 1: GET /api/v1/users/events/analytics (Organizer)
 exports.getOrganizerEventAnalytics = async (req, res, next) => {
   try {
@@ -67,10 +66,25 @@ exports.getOrganizerEvents = async (req, res) => {
       organizer: req.user.id
     }).sort({ createdAt: -1 });
 
+    // Map events to include all public fields, including image
+    const response = events.map(event => ({
+      id: event._id,
+      title: event.title,
+      description: event.description,
+      date: event.date,
+      location: event.location,
+      ticketPrice: event.ticketPrice,
+      availableTickets: event.remainingTickets,
+      organizer: event.organizer,
+      image: event.image,
+      category: event.category,
+      status: event.status
+    }));
+
     res.status(200).json({
       success: true,
-      count: events.length,
-      events
+      count: response.length,
+      data: response
     });
   } catch (error) {
     res.status(500).json({
@@ -126,38 +140,37 @@ exports.changeEventStatus = async (req, res, next) => {
 //API 16: create a new event (POST) /api/v1/events (Organizer)
 exports.createEvent = async (req, res, next) => {
   try {
+    // Only use image from req.body (URL), not file upload
+    const { title, date, location, ticketPrice, totalTickets, image } = req.body;
 
-    console.log('Request body:', req.body);
+    if (!title || !date || !location || !ticketPrice || !totalTickets) {
+      return next(new ErrorResponse('Missing required fields', 400));
+    }
 
-      const { title, date, location, ticketPrice, totalTickets } = req.body;
+    const event = await Event.create({
+      ...req.body,
+      image: image, // Only from body
+      organizer: req.user.id,  // From JWT
+      status: 'pending',       // Default status
+      remainingTickets: totalTickets // Initialize availability
+    });
 
-      if (!title || !date || !location || !ticketPrice || !totalTickets) {
-          return next(new ErrorResponse('Missing required fields', 400));
+    res.status(201).json({
+      success: true,
+      message: 'Event created successfully (pending admin approval)',
+      data: {
+        id: event.id,
+        title: event.title,
+        date: event.date,
+        status: event.status,
+        image: event.image
       }
-
-      const event = await Event.create({
-          ...req.body,
-          organizer: req.user.id,  // From JWT
-          status: 'pending',       // Default status
-          remainingTickets: totalTickets // Initialize availability
-      });
-
-      res.status(201).json({
-          success: true,
-          message: 'Event created successfully (pending admin approval)',
-          data: {
-              id: event.id,
-              title: event.title,
-              date: event.date,
-              status: event.status
-          }
-      });
-
+    });
   } catch (err) {
-      if (err.name === 'ValidationError') {
-          return next(new ErrorResponse(Object.values(err.errors).map(e => e.message).join(', '), 400));
-      }
-      next(err);
+    if (err.name === 'ValidationError') {
+      return next(new ErrorResponse(Object.values(err.errors).map(e => e.message).join(', '), 400));
+    }
+    next(err);
   }
 };
 

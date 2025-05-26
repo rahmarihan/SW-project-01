@@ -95,4 +95,6 @@ export default {
   updateUserRole,
   deleteUser,
   getAnalytics,
+  createEvent,
+  updateEvent,
 };
