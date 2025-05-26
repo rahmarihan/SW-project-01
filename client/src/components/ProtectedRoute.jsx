@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
+
   const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,11 +22,12 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   // Allow any logged-in user if no roles are specified
+
   if (allowedRoles?.length > 0 && !allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
   return children;
-};
+}
 
 export default ProtectedRoute;

@@ -1,4 +1,3 @@
-// src/components/EventForm.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
@@ -12,7 +11,7 @@ const EventForm = () => {
     title: "",
     date: "",
     location: "",
-    availableTickets: "",
+    totalTickets: "",  // renamed from availableTickets
     ticketPrice: "",
     description: "",
   });
@@ -28,7 +27,7 @@ const EventForm = () => {
             title: event.title || "",
             date: event.date ? event.date.split("T")[0] : "", // format for input type=date
             location: event.location || "",
-            availableTickets: event.availableTickets || "",
+            totalTickets: event.totalTickets || "", // renamed field here
             ticketPrice: event.ticketPrice || "",
             description: event.description || "",
           });
@@ -51,8 +50,8 @@ const EventForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation
-    if (!formData.title || !formData.date || !formData.location) {
+    // Basic validation: now include totalTickets and ticketPrice
+    if (!formData.title || !formData.date || !formData.location || !formData.totalTickets || !formData.ticketPrice) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -115,19 +114,20 @@ const EventForm = () => {
         </label>
 
         <label>
-          Available Tickets:
+          Total Tickets<span className="text-red-500">*</span>:
           <input
             type="number"
-            name="availableTickets"
-            value={formData.availableTickets}
+            name="totalTickets"
+            value={formData.totalTickets}
             onChange={handleChange}
             min="0"
+            required
             className="border p-2 rounded w-full"
           />
         </label>
 
         <label>
-          Ticket Price ($):
+          Ticket Price ($)<span className="text-red-500">*</span>:
           <input
             type="number"
             name="ticketPrice"
@@ -135,6 +135,7 @@ const EventForm = () => {
             onChange={handleChange}
             min="0"
             step="0.01"
+            required
             className="border p-2 rounded w-full"
           />
         </label>
