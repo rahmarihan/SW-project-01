@@ -1,11 +1,16 @@
-import axios from 'axios';
+// 🔵 apiAndProtectedRoute.js
 
-// Create Axios instance with base URL
+// --- Axios API service ---
+import axios from 'axios';
+import React, { useContext, useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+
+// Axios instance
 const api = axios.create({
-  baseURL: "http://localhost:5000/api/v1", // ✅ Replace with your actual backend URL
+  baseURL: 'http://localhost:5000/api/v1',
 });
 
-// Attach token from localStorage to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -21,26 +26,25 @@ api.interceptors.request.use(
 const login = (credentials) => api.post('/login', credentials);
 const register = (data) => api.post('/register', data);
 const forgotPassword = (data) => api.put('/forgetPassword', data);
-const logout = () => api.post('/auth/logout'); // Optional: only if backend supports logout
+const logout = () => api.post('/auth/logout');
 
 // Event APIs
 const getEvents = () => api.get('/events');
 const getEventDetails = (id) => api.get(`/events/${id}`);
 const bookTicket = (eventId) => api.post(`/events/${eventId}/book`);
 
-// Organizer APIs
-const getApprovedEvents = async (searchTerm = "", filter = {}) => {
+const getApprovedEvents = async (searchTerm = '', filter = {}) => {
   const params = {
-    status: "approved",
+    status: 'approved',
     ...filter,
     ...(searchTerm && { search: searchTerm }),
   };
-  const response = await api.get("/events", { params });
+  const response = await api.get('/events', { params });
   return response.data;
 };
 
 const getMyEvents = async () => {
-  const response = await api.get("/events/my");
+  const response = await api.get('/events/my');
   return response.data;
 };
 
@@ -50,28 +54,53 @@ const deleteEvent = async (id) => {
 
 // Booking APIs
 const bookTickets = (eventId, numberOfTickets) =>
-  api.post('/bookings', { eventId, numOfTickets: numberOfTickets }).then(res => res.data);
+  api.post('/bookings', { eventId, numOfTickets: numberOfTickets }).then((res) => res.data);
 
 const getUserBookings = () =>
-  api.get('/bookings/user-bookings').then(res => res.data.data);
+  api.get('/bookings/user-bookings').then((res) => res.data.data);
 
 const getBookingDetails = (bookingId) =>
-  api.get(`/bookings/${bookingId}`).then(res => res.data);
+  api.get(`/bookings/${bookingId}`).then((res) => res.data);
 
 const cancelBooking = (bookingId) =>
-  api.delete(`/bookings/${bookingId}`).then(res => res.data);
+  api.delete(`/bookings/${bookingId}`).then((res) => res.data);
 
-// ✅ Profile API
+// User APIs
 export const updateProfile = (data) => api.put('/users/profile', data);
 
-// Get all events (public)
 const getAllEvents = () => api.get('/events/all');
 const getAllUsers = () => api.get('/users');
 const updateUserRole = (id, role) => api.put(`/users/${id}`, { role });
 const deleteUser = (id) => api.delete(`/users/${id}`);
 
-// Export all functions in a single object
-export default {
+// --- ProtectedRoute component ---
+export function ProtectedRoute({ children, allowedRoles }) {
+  const { user, loading } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user && !loading) {
+      navigate('/login');
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles?.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return children;
+}
+
+// Export all APIs
+export const apiService = {
   login,
   register,
   forgotPassword,

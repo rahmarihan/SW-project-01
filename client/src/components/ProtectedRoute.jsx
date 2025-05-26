@@ -2,15 +2,15 @@ import React, { useContext, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-const ProtectedRoute = ({ allowedRoles, children }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !loading) {
       navigate('/login');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -20,7 +20,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // If allowedRoles is not provided, allow any logged-in user
+  // Allow any logged-in user if no roles are specified
   if (allowedRoles?.length > 0 && !allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
@@ -29,5 +29,3 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
 };
 
 export default ProtectedRoute;
-
-
